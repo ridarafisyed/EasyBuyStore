@@ -1,0 +1,41 @@
+{% extends "base.html" %} 
+{% load static%}
+
+{% block head  %}<link
+      href="{% static '/css/product-cards.css' %}"
+      rel="stylesheet"
+    />
+  
+ {% endblock %}
+
+{% block content %}
+
+{% include "components/header.html"%}
+{% include "components/banner.html"%}
+{% include "components/navbar.html"%}
+
+<div class="container">
+  {% if categories%}
+    <h3>Products</h3>  
+    <div class="row gy-5 row-cols-4">
+      {% for category in categories %}
+      <h3>{{category}}</h3>
+      {% for product in category.get_products %}
+            <div class="col text-center">
+              <div class="card" style="width: 18rem;">
+                <img src={{product.image.url}} class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title "><a href="{% url 'product_view' product.id %}">{{ product.title }}</a></h5>
+                  <h4 >$ {{product.price}}</h4> 
+                  <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o"></i></span></p>
+                  <div > <a href="{% url 'product_view' product.id %}" class="btn btn-light"> <i  class="	fa fa-eye "></i></a> <a href="#" class="btn btn-light red"><i class="fa fa-heart"></i></a> </div>
+                </div>
+              </div>
+        {% endfor %}
+        
+        </div>
+      {% endfor %}
+    </div>
+  {%endif%}
+</div>
+{%endblock%}

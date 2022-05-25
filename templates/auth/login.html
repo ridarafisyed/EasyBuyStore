@@ -1,0 +1,31 @@
+<!-- @format -->
+
+{% extends "base.html" %} {% load static %} 
+{% block title %}Login | {% endblock %}
+{% block content %}
+<div class="container">
+  <div style="margin: 80px">
+    {% if msg != None %}
+      <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <span><i class="fa fa-warning" style="font-size:24px;"> </i>   {{msg}}</span>
+      </div>
+    {% endif %}
+    <h1>Login</h1>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %} {{form.as_p}}
+      <button
+        type="submit"
+        class="btn btn-success"
+        style="background: #8e060f; border: #8e060f"
+        >Submit</button
+      >
+    </form>
+
+    <hr /><span>
+      Don't have an account ? Create a new
+      <a href="{% url 'register'%}">Here!</a>
+    </span>
+  </div>
+</div>
+
+{%endblock%}

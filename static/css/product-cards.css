@@ -1,0 +1,35 @@
+body {
+font-family: "Roboto", sans-serif;
+font-size: 18px;
+background-color: #fdfdfd;
+}
+
+.head_text {
+color: white;
+}
+
+.card {
+box-shadow: 0 16px 48px #e3e7eb;
+}
+.card-title a{
+    text-decoration: none;
+    color: maroon
+}
+
+
+.btn-light i{
+    color:gray;
+}
+
+
+.btn-light i:hover{
+    color:orange
+}
+.btn-light.red i:hover{
+    color:maroon
+}
+.card-img-top{
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+}
