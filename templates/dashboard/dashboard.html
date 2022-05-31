@@ -49,10 +49,10 @@
           <a href="{%url 'dashboard'%}"><i class="fa fa-home"></i>Home</a>
         </li>
         <li class="item">
-          <a href="#"><i class="	fa fa-shopping-bag"></i>Orders</a>
+          <a href="{% url 'order:order_view'%}"><i class="	fa fa-shopping-bag"></i>Orders</a>
         </li>
         <li class="item">
-          <a href="#"><i class="fa fa-sort-alpha-asc"></i>Transactions</a>
+          <a href="{% url 'order:transaction_history'%}"><i class="fa fa-sort-alpha-asc"></i>Transactions</a>
         </li>
           </ul>
     {%endif%}

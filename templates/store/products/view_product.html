@@ -15,13 +15,14 @@
                 {% if product.quantity > 0%}<p style="color: green"> In Stock </p>{% else %} <p style="color: gray">Out of Stock</p> {% endif%}
                 
                 <form action="{% url "cart:cart_add" product.id %}" method="post" class="row g-3">
+                    {% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="col-auto">
                         {{ form.quantity.errors }}
                         <label  for="{{ form.quantity.id_for_label }}" class="visually-hidden">Quantity</label>
                         {{ form.quantity }}
                     </div>  
-                    {% csrf_token %}
+                    
                     <div class="col-auto">
                         <button type="submit" class="btn btn-success ">Add to cart</button>
                     </div>

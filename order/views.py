@@ -1,3 +1,4 @@
+from decimal import Decimal
 from genericpath import exists
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -21,9 +22,14 @@ def checkout (request):
         order, create = Order.objects.get_or_create(customer= request.user,status=1, total_paid=total_paid)
         for item in cart:
             product = Product.objects.filter(id = item['product_id'])
+            price = Decimal(item['price'])
+            quantity = int(item['quantity'])
             store = Store.objects.filter(ower = product.vender)
-            transaction = Transaction.objects.create(store = store, customer= request.user, amount= order.total_paid)
-            OrderItem.objects.get_or_create(order=order, product= product, price=item['price'], quantity=item['quantity'])
+            order, create= OrderItem.objects.get_or_create(order=order, product= product, price=price, quantity=quantity)
+            order.save()
+            transaction = Transaction.objects.create(store=store, customer=request.user, amount= order.total_paid)
+            transaction.save()
+
     except:
         pass
     address = Address.objects.filter(user = request.user).exists()
@@ -70,3 +76,54 @@ def payment(request):
         
     cart.clear()
     return render(request, 'store/checkout/payment.html', {'address': address, 'order':order})
+
+
+
+# ================================================  Admin level views =========================================== #
+
+def admin_order_view(request):
+    return render(request, "dashboard/order/admin/admin_order_view.html")
+
+def admin_order_update(request):
+    return render(request, "dashboard/order/admin/admin_order_update.html")
+
+def admin_order_delete(request):
+    return render(request, "dashboard/order/admin/admin_order_delete.html")
+
+
+def admin_transaction_history(request):
+    return render(request, "dashboard/transactions/admin/admin_transaction_history.html")
+
+def admin_transaction_update(request):
+    return render(request, "dashboard/transactions/admin/admin_transaction_update.html")
+
+def admin_transaction_delete(request):
+    return render(request, "dashboard/transactions/admin/admin_transaction_delete.html")
+
+
+# ===========================================  vender/store owner level views ====================================== #
+
+def order_view(request):
+    orders = Order.objects.filter(customer = request.user)
+    context = { 'orders':orders}
+    return render(request, "dashboard/order/order_view.html", context)
+
+def order_update(request, order_id):
+    return render(request, "dashboard/order/order_update.html")
+
+def order_delete(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    if order is not None:
+       order.delete()
+       messages.info(request,"successfully deteled!")
+    else: messages.info(request, "No record found" )
+    return render(request, "dashboard/order/order_delete.html")
+
+def transaction_history(request):
+    return render(request, "dashboard/transactions/transaction_history.html")
+
+def transaction_update(request):
+    return render(request, "dashboard/transactions/transaction_update.html")
+
+def transaction_delete(request):
+   return render(request, "dashboard/transactions/transaction_delete.html")

@@ -38,11 +38,5 @@ def cart_remove(request, product_id):
     return redirect('cart:cart_detail')
 
 def cart_detail(request):
-    cart = Cart(request)
-    print(request.user)
-    # for item in cart:
-    #     item['update_quantity_form'] = CartAddItemForm(initial={'quantity': item['quantity'],
-    #                                                                'update': True})
-
-       
+    cart = Cart(request)       
     return render(request, 'store/cart/cart.html', {'cart': cart})
