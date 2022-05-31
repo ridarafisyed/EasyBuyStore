@@ -24,7 +24,6 @@ class Order(models.Model):
     status = models.PositiveIntegerField(choices=CHOICES, default=0)
     total_paid = models.DecimalField(max_digits=10, decimal_places=2)
     billing_satuts = models.BooleanField(default=False)
-    session_id = models.CharField(max_length=100)
 
     class Meta:
         ordering = ('created_at',)

@@ -75,7 +75,7 @@ class Store(models.Model):
         return self.name
 
 class Address(models.Model):
-    user = models.ForeignKey(UserAccount,related_name="shippment", on_delete=models.CASCADE, )
+    user = models.OneToOneField(UserAccount, related_name="shippment", on_delete=models.CASCADE)
     full_name = models.CharField(max_length=150)
     phone = models.CharField( max_length=50)
     postcode = models.CharField( max_length=50)
@@ -86,4 +86,7 @@ class Address(models.Model):
     created_at = models.DateTimeField( auto_now_add=True)
     updated_at = models.DateTimeField( auto_now=True)
     default = models.BooleanField( default=False)
+
+    def __str__(self):
+        return self.full_name
 

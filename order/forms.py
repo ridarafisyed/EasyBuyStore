@@ -1,8 +1,10 @@
 from django import forms
 
+from account.models import Address
 
 
-class AddressForm(forms.Form):
+
+class AddressForm(forms.ModelForm):
     full_name = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -45,19 +47,17 @@ class AddressForm(forms.Form):
             }
         )
     )
+    default = forms.BooleanField()
     delivery_instructions = forms.CharField(
-        widget=forms.TextInput(
+        widget=forms.Textarea(
             attrs={
                 'class': 'form-control' 
             }
         )
     )
-    counrty = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control' 
-            }
-        )
-    )
-
+    
+    class Meta:
+        model = Address
+        fields = ("full_name", "phone", "postcode", "address_line", "address_line2", "town_city", "delivery_instructions", "default")
+        
 
