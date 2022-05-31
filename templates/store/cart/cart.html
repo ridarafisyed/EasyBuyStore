@@ -1,0 +1,132 @@
+{% extends "../../base.html" %} 
+{% load static %}
+
+
+{% block title %}Shopping Cart | {% endblock %}
+
+{% include "components/header.html"%}
+
+
+{%block content%} 
+<div class="container">
+    {% include "../../components/header.html"%}
+  
+   <div class="container">           
+       <a href="{% url "index"%}" class="btn btn-warning my-3"> <i class="	fa fa-long-arrow-left"> </i>  Continue Shopping </a>
+       <div class="row">
+        <div class="col-8">
+            <div class="row"> 
+                <div class="col-9">
+                    <h4>Shopping Cart </h4>
+                </div> 
+        {% if cart%}
+            <div class="col-3"> 
+                    <h4>{{cart.total_items}} items</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <table class="table">
+                        <thead>
+                        <tr class="table-light">
+                            <th scope="col"></th>
+                            <th scope="col">Item 1</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Remove</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart%}
+                            {% with product=item.product %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'product_view' product.slug%}">     
+                                            <img src="{% static '/img/no_image.jpg'%}"/>
+                                        </a>
+                                    </td>
+                                    <td>{{product.title}}</td>
+                                    <td>Rs. {{item.price}}</td>
+                                   
+                                    <td class="text-center"> 
+                                        <form action="{% url "cart:cart_decrement" product.id%}" method="post">
+                                            <button type="submit" class="btn btn-light"><i class="fa fa-minus"></i></button>
+                                            {% csrf_token %}
+                                        </form>
+                                                {{item.quantity}}
+                                        <form action="{% url "cart:cart_increment" product.id%}" method="post">
+                                            <button type="submit" class="btn btn-light"><i class="fa fa-plus"></i></button>
+                                             {% csrf_token %}
+                                        </form>
+                                    </td>
+                                   
+                                    <td>Rs. {{item.total_price}}</td>
+                                     <td>
+                                        <form action="{% url "cart:cart_remove" product.id%}" method="post">
+                                            <button type="submit" class="btn btn-danger" > X </button>
+                                            {% csrf_token %}
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endwith%}
+                            {% endfor %}
+                       
+                        <tbody>
+                            <tfoot>
+                                <tr class="table-light">
+                                    <td>Total</td>
+                                    <td colspan="4"></td>
+                                    <th>{{cart.get_total_price}}</th>
+                                </tr>
+                            </tfoot>
+                    </table>
+                    
+                </div>
+            </div>
+            </div>
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Order Summary </h5>
+                        <table class=
+                        "table">
+                            <thead>
+                                <tr>
+                                <th>Subtotal:</th>
+                                <th>$ {{cart.get_total_price}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Shipping</td>
+                                    <td>$ {{cart.shippment}}</td>
+                                </tr>
+                                <tr>
+                                    <td>Tax : {{cart.tax}}%</td>
+                                    <td>$ {{cart.get_tax}}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>Total</td>
+                                    <td>$ {{cart.get_total}}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <a href="{% url "order:checkout"%}" style="float:right" class="btn btn-success">Checkout</a>
+                    
+                    </div>
+                    </div>
+            </div>
+            {% else %}
+                <p> There is no item in Your cart
+            {% endif%}
+        </div>
+
+   </div>
+   
+    
+</div>
+{%endblock%}

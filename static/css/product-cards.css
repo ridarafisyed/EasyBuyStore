@@ -7,13 +7,30 @@ background-color: #fdfdfd;
 .head_text {
 color: white;
 }
-
+.heading-title{
+    color: maroon;
+    text-transform: uppercase
+}
 .card {
 box-shadow: 0 16px 48px #e3e7eb;
 }
+.card-title{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* number of lines to show */
+            line-clamp: 1; 
+    -webkit-box-orient: vertical;
+    }
 .card-title a{
     text-decoration: none;
-    color: maroon
+    color: maroon;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* number of lines to show */
+           line-clamp: 2; 
+    -webkit-box-orient: vertical;
 }
 
 

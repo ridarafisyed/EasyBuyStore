@@ -4,12 +4,14 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.text import slugify
 from django.contrib import messages
 from order.models import Order
-from .models import Category, Product
+from .context_processors import cart_renderer
+from .models import Cart, Category, Product
 from account.models import Store
 from account.forms import StoreForm, StoreAdminForm
 from .forms import ProductForm, CategoryForm
-
+from cart.forms import CartAddItemForm
 from django.contrib.auth import get_user_model
+import uuid
 
 User = get_user_model()
 # Create your views here.
@@ -21,24 +23,24 @@ def store_view(request):
     deals = Product.objects.filter(discount= True)
     categories = Category.objects.all()
     products = Product.objects.all()
-    context= {'deals':deals, 'categories': categories, 'products': products}
+    context= {'deals':deals, 'categories': categories, 'products': products, 'cart':cart}
     return render(request,'index.html', context)
 
 # products detail views 
 def product_detail_view(request, slug): 
    product=Product.objects.get(slug=slug) 
-
-   context= {'product':product}
+   form = CartAddItemForm()
+   context= {'product':product, 'form':form}
    return render(request, "store/products/view_product.html", context )
 
-# def add_cart(request):
-#     try:
-#         user = request.user
-#         order = Order.objects.get(user= user, complete=False)
-#     except:
-#         order = None
-#     context = {'order': order}
-#     return render(request, 'store/cart.html', context)
+def cart(request):
+    try:
+        user = request.user
+        cart = Cart.objects.get(user = user, completed= False)
+    except:
+        cart = None
+
+    context = {'cart':cart}
 
 # ==================================================  Admin Level views ============================================= #
 # ====================================================  Products views ============================================== #

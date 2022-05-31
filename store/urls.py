@@ -5,12 +5,12 @@ from . import views
 
 urlpatterns = [
     path('', views.store_view, name="index" ), 
-    path('product-view/<int:pk>/',views.product_detail_view,name='product_view'),  
-    # path('cart/', views.cart, name='cart'),
+    path('product-view/<slug>/',views.product_detail_view,name='product_view'),  
+
     # admin level URLs
     # products CURD URLs
     path('admin-products-views', views.admin_products_view, name="admin_products_views"),
-     path('admin-product-add-view', views.product_add_view, name="admin_product_add_view"),
+    path('admin-product-add-view', views.product_add_view, name="admin_product_add_view"),
     path('admin-product-edit-view/<slug>/', views.admin_product_edit_view, name='admin_product_edit_view'),
     path('admin-product-delete-view/<slug>/', views.admin_product_delete_view, name='admin_product_delete_view'),
 

@@ -19,19 +19,44 @@
   <div id="wrapper">
   <aside id="sidebar-wrapper">
     <div class="sidebar-brand">
-      <h2>EBS Store</h2>
+      {% if user.user_type == 0 %}
+          <h2>{{user.store.name}}</h2>
+      {% else  %}
+          <h2> {{user.first_name}}  {{user.last_name}}</h2>
+      {%endif%}
     </div>
-    <ul class="sidebar sidebar-nav">
-      <li class="item">
-        <a href="{%url 'dashboard'%}"><i class="fa fa-home"></i>Home</a>
-      </li>
-      <li class="item">
-        <a href="{%url 'products'%}"><i class="	fa fa-shopping-bag"></i>Products</a>
-      </li>
-      <li class="item">
-        <a href="{%url 'categories'%}"><i class="fa fa-sort-alpha-asc"></i>Categories</a>
-      </li>
-    </ul>
+    {% if user.user_type == 0 %}
+      <ul class="sidebar sidebar-nav">
+        <li class="item">
+          <a href="{%url 'dashboard'%}"><i class="fa fa-home"></i>Home</a>
+        </li>
+        <li class="item">
+          <a href="{%url 'products'%}"><i class="	fa fa-shopping-bag"></i>Products</a>
+        </li>
+        <li class="item">
+          <a href="#"><i class="	fa fa-shopping-bag"></i>Orders</a>
+        </li>
+        <li class="item">
+          <a href="#"><i class="fa fa-sort-alpha-asc"></i>Transactions</a>
+        </li>
+        <li class="item">
+          <a href="{%url 'categories'%}"><i class="fa fa-sort-alpha-asc"></i>Categories</a>
+        </li>
+      </ul>
+    {% else %}  
+      <ul class="sidebar sidebar-nav">
+        <li class="item">
+          <a href="{%url 'dashboard'%}"><i class="fa fa-home"></i>Home</a>
+        </li>
+        <li class="item">
+          <a href="#"><i class="	fa fa-shopping-bag"></i>Orders</a>
+        </li>
+        <li class="item">
+          <a href="#"><i class="fa fa-sort-alpha-asc"></i>Transactions</a>
+        </li>
+          </ul>
+    {%endif%}
+    
   </aside>
 
   <div id="navbar-wrapper">

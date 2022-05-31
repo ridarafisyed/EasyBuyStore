@@ -1,92 +1,43 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib import messages
+from account.models import Address, UserAccount
 from store.models import Product
 from order.models import Order, OrderItem
-from django.contrib.auth import get_user_model
+from cart.cart import Cart
+from .forms import AddressForm
+import uuid
 
-User = get_user_model()
-
-# Create your views here.
-
-def add_to_cart(request, slug):
-    item = get_object_or_404(Product, slug=slug)
-    order_item, created = OrderItem.objects.get_or_create(
-        item=item,
-        user=request.user,
-        ordered=False
-    )
-    order_qs = Order.objects.filter(user=request.user, ordered=False)
-    if order_qs.exists():
-        order = order_qs[0]
-        # check if the order item is in the order
-        if order.items.filter(item__slug=item.slug).exists():
-            order_item.quantity += 1
-            order_item.save()
-            messages.info(request, "This item quantity was updated.")
-            return redirect("core:order-summary")
-        else:
-            order.items.add(order_item)
-            messages.info(request, "This item was added to your cart.")
-            return redirect("core:order-summary")
-    else:
-        # ordered_date = timezone.now()
-        order = Order.objects.create(
-            user=request.user)
-        order.items.add(order_item)
-        messages.info(request, "This item was added to your cart.")
-        return redirect("core:order-summary")
-
-def remove_from_cart(request, slug):
-    item = get_object_or_404(Product, slug=slug)
-    order_qs = Order.objects.filter(
-        user=request.user,
-        ordered=False
-    )
-    if order_qs.exists():
-        order = order_qs[0]
-        # check if the order item is in the order
-        if order.items.filter(item__slug=item.slug).exists():
-            order_item = OrderItem.objects.filter(
-                item=item,
-                user=request.user,
-                ordered=False
-            )[0]
-            order.items.remove(order_item)
-            order_item.delete()
-            messages.info(request, "This item was removed from your cart.")
-            return redirect("core:order-summary")
-        else:
-            messages.info(request, "This item was not in your cart")
-            return redirect("core:product", slug=slug)
-    else:
-        messages.info(request, "You do not have an active order")
-        return redirect("core:product", slug=slug)
-
-def remove_single_item_from_cart(request, slug):
-    item = get_object_or_404(Product, slug=slug)
-    order_qs = Order.objects.filter(
-        user=request.user,
-        ordered=False
-    )
-    if order_qs.exists():
-        order = order_qs[0]
-        # check if the order item is in the order
-        if order.items.filter(item__slug=item.slug).exists():
-            order_item = OrderItem.objects.filter(
-                item=item,
-                user=request.user,
-                ordered=False
-            )[0]
-            if order_item.quantity > 1:
-                order_item.quantity -= 1
-                order_item.save()
+def checkout (request):
+    cart = Cart(request)
+   
+    msg = "You are here in Checkout page "
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            addressForm = AddressForm(request.POST)
+            
+            # adding Address
+            if addressForm.is_valid():
+                cd = addressForm.cleaned_data
+                address = Address.objects.create(user = request.user, 
+                full_name=cd['full_name'], 
+                phone=cd['phone'],
+                postcode=cd['postcode'],
+                address_line=cd['address_line'],
+                address_line2=cd['address_line2'],
+                town_city=cd['town_city'],
+                delivery_instructions=['delivery_instructions'])
+                address.save()
+                messages.success(request, "Your Address is successful store!")
             else:
-                order.items.remove(order_item)
-            messages.info(request, "This item quantity was updated.")
-            return redirect("core:order-summary")
+                messages.warning(request, "There must be some error please try again later.. ")
         else:
-            messages.info(request, "This item was not in your cart")
-            return redirect("core:product", slug=slug)
+            msg =msg + "AnonymousUser try to checkout"
+            messages.success(request, "Your Address is successful store!")
+        
     else:
-        messages.info(request, "You do not have an active order")
-        return redirect("core:product", slug=slug)
+        addressForm = AddressForm()
+        
+
+    
+
+    return render(request, 'store/checkout.html', {'msg': msg, 'addressForm': addressForm})

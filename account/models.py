@@ -73,3 +73,17 @@ class Store(models.Model):
 
     def __str__(self):
         return self.name
+
+class Address(models.Model):
+    user = models.ForeignKey(UserAccount,related_name="shippment", on_delete=models.CASCADE, )
+    full_name = models.CharField(max_length=150)
+    phone = models.CharField( max_length=50)
+    postcode = models.CharField( max_length=50)
+    address_line = models.CharField( max_length=255)
+    address_line2 = models.CharField( max_length=255, null=True, blank=True)
+    town_city = models.CharField( max_length=150)
+    delivery_instructions = models.CharField( max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField( auto_now_add=True)
+    updated_at = models.DateTimeField( auto_now=True)
+    default = models.BooleanField( default=False)
+

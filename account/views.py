@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-
+from django.views.decorators.http import require_POST
 from order.models import Order
 
 
@@ -18,6 +18,7 @@ User = get_user_model()
 # Create your views here.
 
 # if user want to sell or become a register user for discount 
+
 def register_view(request):
     msg = None
     if request.method == 'POST':

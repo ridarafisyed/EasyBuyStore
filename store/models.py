@@ -32,10 +32,10 @@ class Product(models.Model):
     slug = models.SlugField(max_length=255)
     description = models.TextField(blank=True, null=True)
     discount = models.BooleanField(default=False)
-    disc_value = models.PositiveIntegerField(default=0)
-    disc_price = models.DecimalField(max_digits=6, decimal_places=2)
+    disc_value = models.PositiveIntegerField(default=0, blank=True, null=True)
+    disc_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
     added_at = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='uploads/', null=True, blank=True, verbose_name="")
@@ -86,16 +86,30 @@ class Product(models.Model):
         super(Product, self).save(*args, **kwargs)
 
 
-    # @property
-    # def num_of_items(self):
-    #     cart_item = self.cartitems_set.all()
-    #     total = sum([qty.quantity for qty in cart_item])
-    #     return total
-    # @property
-    # def cart_total(self):
-    #     cart_item = self.cartitems_set.all()
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    # cart_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed = models.BooleanField(default=False)
+    device = models.CharField(max_length=100)
 
-
-# class CartItem(models.Model):
-#     cart_id = models.ForeignKey()
+    @property
+    def num_of_items(self):
+        cart_item = self.cartitems_set.all()
+        total = sum([qty.quantity for qty in cart_item])
+        return total
     
+    @property
+    def cart_total(self):
+        cart_item = self.cartitems_set.all()
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    item = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+
+# class SaveItem(models.Model):
+#     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+#     session_id = models.CharField(max_length=100)
+#     item = models.ForeignKey(Product, on_delete=models.CASCADE)

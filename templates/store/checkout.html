@@ -1,0 +1,19 @@
+{% extends "../base.html" %} 
+{% load static %}
+
+
+{% block title %}Checkout | {% endblock %}
+
+{% include "components/header.html"%}
+
+
+{%block content%} 
+ 
+<div class="container">
+    {% include "../components/header.html"%}
+     {{msg}}
+    <h1> Address</h1>
+    {{addressForm.as_p}}
+
+</div>
+{%endblock%}
