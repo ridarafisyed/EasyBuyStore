@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.views.decorators.http import require_POST
-from order.models import Order
+from order.models import Order, Transaction
 
 
 from .models import Store
@@ -75,6 +75,15 @@ def dashboard_view(request):
         total_users = User.objects.all().count()
         total_products = Product.objects.all().count()
         total_orders = Order.objects.all().count()
+        total_transactions = Transaction.objects.all().count()
+        transactions = Transaction.objects.filter(customer = request.user)
+        balance = 0
+        for transaction in transactions:
+            balance += transaction.amount
+
+        if total_transactions is None:
+            total_transactions = 0
+
         if total_stores is None:
             total_stores = 0
 
@@ -102,6 +111,8 @@ def dashboard_view(request):
             'total_stores': total_stores,
             'total_products':total_products, 
             'total_orders': total_orders,
+            'total_transactions': total_transactions,
+            'balance' : balance
         }
         return render(request, 'dashboard/admin_main.html', context )
 

@@ -56,6 +56,7 @@ def admin_products_view(request):
     return render(request, 'dashboard/products/products.html', context)
 
 # edit any product detail 
+@user_passes_test(lambda u: u.is_superuser)
 def admin_product_edit_view(request,slug):
     product = Product.objects.get(slug=slug)
     if request.method == 'POST':
@@ -72,6 +73,7 @@ def admin_product_edit_view(request,slug):
     return render(request, 'dashboard/products/edit_product.html', context)
 
 # delete any products regardless of user or store 
+@user_passes_test(lambda u: u.is_superuser)
 def admin_product_delete_view(request, slug):
     product = Product.object.get(slug=slug)
     if product is not None:
@@ -89,7 +91,7 @@ def admin_stores_view(request):
     stores =  Store.objects.all()
     total = stores.count()
     return render(request, 'dashboard/stores/admin_stores_view.html', {'stores': stores, 'total': total})
-
+@user_passes_test(lambda u: u.is_superuser)
 def admin_store_add_view(request):
     msg = None
     if request.method == "POST":
@@ -106,6 +108,7 @@ def admin_store_add_view(request):
 
 
 # edit any product detail 
+@user_passes_test(lambda u: u.is_superuser)
 def admin_store_edit_view(request,pk):
     store = Store.objects.get(pk=pk)
     if request.method == 'POST':
@@ -121,6 +124,7 @@ def admin_store_edit_view(request,pk):
     return render(request, 'dashboard/stores/admin_store_edit.html', {'form': form, 'store': store})
 
 # delete any products regardless of user or store 
+@user_passes_test(lambda u: u.is_superuser)
 def admin_store_delete_view(request, pk):
     store = Store.objects.get(pk=pk)
     if store is not None:
@@ -151,6 +155,7 @@ def admin_users_view(request):
         }
     return render(request, 'dashboard/accounts/admin_user_view.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
 def admin_user_add_view(request):
     customers =  User.objects.filter(user_type = 1)
     clients =  User.objects.filter(user_type = 0)
@@ -168,6 +173,7 @@ def admin_user_add_view(request):
 
 
 # edit any User detail 
+@user_passes_test(lambda u: u.is_superuser)
 def admin_user_edit_view(request,pk):
     store = User.objects.get(pk=pk)
     if request.method == 'POST':
@@ -183,6 +189,7 @@ def admin_user_edit_view(request,pk):
     return render(request, 'dashboard/accounts/admin_user_edit.html', {'form': form, 'store': store})
 
 # delete any products regardless of user or store 
+@user_passes_test(lambda u: u.is_superuser)
 def admin_user_delete_view(request, pk):
     user = User.object.get(pk=pk)
     if user is not None:

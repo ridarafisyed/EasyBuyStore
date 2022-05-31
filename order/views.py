@@ -1,7 +1,7 @@
 from decimal import Decimal
 from genericpath import exists
 from django.shortcuts import render,redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from account.models import Address, UserAccount, Store
 from store.models import Product
@@ -66,7 +66,7 @@ def checkout (request):
     return render(request, 'store/checkout/checkout.html', {'address': address, 'addressForm': addressForm, 'order':order})
 
 
-
+@login_required
 def payment(request):
     cart = Cart(request)
     address = Address.objects.get(user = request.user)
@@ -80,15 +80,15 @@ def payment(request):
 
 
 # ================================================  Admin level views =========================================== #
-
+@user_passes_test(lambda u: u.is_superuser)
 def admin_order_view(request):
     orders = Order.objects.all()
     context = { 'orders':orders}
     return render(request, "dashboard/order/admin/admin_order_view.html", context)
-
+@user_passes_test(lambda u: u.is_superuser)
 def admin_order_update(request, order_id):
     return render(request, "dashboard/order/admin/admin_order_update.html")
-
+@user_passes_test(lambda u: u.is_superuser)
 def admin_order_delete(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order is not None:
@@ -97,12 +97,12 @@ def admin_order_delete(request, order_id):
     else: messages.info(request, "No record found" )
     return render(request, "dashboard/order/admin/admin_order_delete.html")
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def admin_transaction_history(request):
     orders = Transaction.objects.all()
     context = { 'orders':orders}
     return render(request, "dashboard/transactions/admin/admin_transaction_history.html", context)
-
+@user_passes_test(lambda u: u.is_superuser)
 def admin_transaction_update(request, transaction_id):
     # transaction = Order.objects.get(pk=transaction_id)
     # if transaction is not None:
@@ -110,7 +110,7 @@ def admin_transaction_update(request, transaction_id):
     #    messages.info(request,"successfully deteled!")
     # else: messages.info(request, "No record found" )
     return render(request, "dashboard/transactions/admin/admin_transaction_update.html")
-
+@user_passes_test(lambda u: u.is_superuser)
 def admin_transaction_delete(request, transaction_id):
     transaction = Order.objects.get(pk=transaction_id)
     if transaction is not None:
@@ -121,12 +121,12 @@ def admin_transaction_delete(request, transaction_id):
 
 
 # ===========================================  vender/store owner level views ====================================== #
-
+@login_required
 def order_view(request):
     orders = Order.objects.filter(customer = request.user)
     context = { 'orders':orders}
     return render(request, "dashboard/order/order_view.html", context)
-
+@login_required
 def order_update(request, order_id):
     # transaction = Order.objects.get(pk=transaction_id)
     # if transaction is not None:
@@ -134,7 +134,7 @@ def order_update(request, order_id):
     #    messages.info(request,"successfully deteled!")
     # else: messages.info(request, "No record found" )
     return render(request, "dashboard/order/order_update.html")
-
+@login_required
 def order_delete(request, order_id):
     order = Order.objects.get(pk=order_id)
     if order is not None:
@@ -142,15 +142,15 @@ def order_delete(request, order_id):
        messages.info(request,"successfully deteled!")
     else: messages.info(request, "No record found" )
     return render(request, "dashboard/order/order_delete.html")
-
+@login_required
 def transaction_history(request):
     transactions = Transaction.objects.filter(customer = request.user)
     context = { 'transactions':transactions}
     return render(request, "dashboard/transactions/transaction_history.html", context)
-
+@login_required
 def transaction_update(request, transaction_id):
     return render(request, "dashboard/transactions/transaction_update.html")
-
+@login_required
 def transaction_delete(request, transaction_id):
     order = Transaction.objects.get(pk=transaction_id)
     if order is not None:
