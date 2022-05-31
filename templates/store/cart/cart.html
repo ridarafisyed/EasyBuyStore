@@ -43,7 +43,7 @@
                                 <tr>
                                     <td>
                                         <a href="{% url 'product_view' product.slug%}">     
-                                            <img src="{% static '/img/no_image.jpg'%}"/>
+                                            <img src="{{product.image}}" style="width:200px"/>
                                         </a>
                                     </td>
                                     <td>{{product.title}}</td>

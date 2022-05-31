@@ -82,22 +82,41 @@ def payment(request):
 # ================================================  Admin level views =========================================== #
 
 def admin_order_view(request):
-    return render(request, "dashboard/order/admin/admin_order_view.html")
+    orders = Order.objects.all()
+    context = { 'orders':orders}
+    return render(request, "dashboard/order/admin/admin_order_view.html", context)
 
-def admin_order_update(request):
+def admin_order_update(request, order_id):
     return render(request, "dashboard/order/admin/admin_order_update.html")
 
-def admin_order_delete(request):
+def admin_order_delete(request, order_id):
+    order = Order.objects.get(pk=order_id)
+    if order is not None:
+       order.delete()
+       messages.info(request,"successfully deteled!")
+    else: messages.info(request, "No record found" )
     return render(request, "dashboard/order/admin/admin_order_delete.html")
 
 
 def admin_transaction_history(request):
-    return render(request, "dashboard/transactions/admin/admin_transaction_history.html")
+    orders = Transaction.objects.all()
+    context = { 'orders':orders}
+    return render(request, "dashboard/transactions/admin/admin_transaction_history.html", context)
 
-def admin_transaction_update(request):
+def admin_transaction_update(request, transaction_id):
+    # transaction = Order.objects.get(pk=transaction_id)
+    # if transaction is not None:
+    #    transaction.delete()
+    #    messages.info(request,"successfully deteled!")
+    # else: messages.info(request, "No record found" )
     return render(request, "dashboard/transactions/admin/admin_transaction_update.html")
 
-def admin_transaction_delete(request):
+def admin_transaction_delete(request, transaction_id):
+    transaction = Order.objects.get(pk=transaction_id)
+    if transaction is not None:
+       transaction.delete()
+       messages.info(request,"successfully deteled!")
+    else: messages.info(request, "No record found" )
     return render(request, "dashboard/transactions/admin/admin_transaction_delete.html")
 
 
@@ -109,6 +128,11 @@ def order_view(request):
     return render(request, "dashboard/order/order_view.html", context)
 
 def order_update(request, order_id):
+    # transaction = Order.objects.get(pk=transaction_id)
+    # if transaction is not None:
+    #    transaction.delete()
+    #    messages.info(request,"successfully deteled!")
+    # else: messages.info(request, "No record found" )
     return render(request, "dashboard/order/order_update.html")
 
 def order_delete(request, order_id):
@@ -120,10 +144,17 @@ def order_delete(request, order_id):
     return render(request, "dashboard/order/order_delete.html")
 
 def transaction_history(request):
-    return render(request, "dashboard/transactions/transaction_history.html")
+    transactions = Transaction.objects.filter(customer = request.user)
+    context = { 'transactions':transactions}
+    return render(request, "dashboard/transactions/transaction_history.html", context)
 
-def transaction_update(request):
+def transaction_update(request, transaction_id):
     return render(request, "dashboard/transactions/transaction_update.html")
 
-def transaction_delete(request):
-   return render(request, "dashboard/transactions/transaction_delete.html")
+def transaction_delete(request, transaction_id):
+    order = Transaction.objects.get(pk=transaction_id)
+    if order is not None:
+       order.delete()
+       messages.info(request,"successfully deteled!")
+    else: messages.info(request, "No record found" )
+    return render(request, "dashboard/transactions/transaction_delete.html")

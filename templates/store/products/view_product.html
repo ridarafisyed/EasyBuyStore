@@ -5,7 +5,7 @@
     {% include "../../components/header.html"%}
     <div class="container">
         <div class="row gy-5 row-cols-2">
-            <div class="col"><img src="https://picsum.photos/200" class="card-img-top" alt="product-image"></div>
+            <div class="col"><img src={{product.image}} class="card-img-top" alt="product-image"></div>
             <div class="col">
                 <h3 style="text-transform: capitalize;">{{product.title}}</h3>
                 <h4 style="color: maroon" class="py-2">$ {{product.price}}</h4>
