@@ -10,7 +10,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Total Balance</h5>
                         <h2 class="card-text">{{balance}}</h2>
-                        <a href="#" class="btn btn-success">Your Transaction History</a>
+                        <a href={%url 'order:admin_transaction_history'%} class="btn btn-success">Your Transaction History</a>
                     </div>
                 </div>
             </div>
@@ -19,7 +19,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Transactions</h5>
                         <h2 class="card-text">{{total_transactions}}</h2>
-                        <a href="#" class="btn btn-success">Company Transaction History</a>
+                        <a href={%url 'order:admin_transaction_history'%} class="btn btn-success">Company Transaction History</a>
                     </div>
                 </div>
             </div>
