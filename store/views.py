@@ -1,14 +1,13 @@
-
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.text import slugify
 from django.contrib import messages
 from order.models import Order
-from .context_processors import cart_renderer
-from .models import Cart, Category, Product
+from .models import  Brand, Category, Comments, Product
 from account.models import Store
 from account.forms import StoreForm, StoreAdminForm
-from .forms import ProductForm, CategoryForm
+from .forms import CommentsForm, ProductForm, CategoryForm, SearchForm
 from cart.forms import CartAddItemForm
 from django.contrib.auth import get_user_model
 import uuid
@@ -22,26 +21,58 @@ User = get_user_model()
 def store_view(request):
     deals = Product.objects.filter(discount= True)
     categories = Category.objects.all()
+    brand = Brand.objects.all()
     products = Product.objects.all()
-    context= {'deals':deals, 'categories': categories, 'products': products, 'cart':cart}
+
+    context= {'deals':deals, 'categories': categories, 'products': products, 'brand': brand}
     return render(request,'index.html', context)
 
 # products detail views 
 def product_detail_view(request, slug): 
    product=Product.objects.get(slug=slug) 
+   comments = Comments.objects.filter(product = product)
+   same_category_products = Product.objects.filter(category = product.category)
+   same_brand_products = Product.objects.filter(brands = product.brands)
    form = CartAddItemForm()
-   context= {'product':product, 'form':form}
+   commentform = CommentsForm()
+   context= {'product':product, 'comments' : comments,'form':form, 'commentform': commentform,'same_category': same_category_products, 'same_brand': same_brand_products}
    return render(request, "store/products/view_product.html", context )
 
-def cart(request):
-    try:
-        user = request.user
-        cart = Cart.objects.get(user = user, completed= False)
-    except:
-        cart = None
+def products_list_view(request):
+    deals = Product.objects.filter(discount= True)
+    categories = Category.objects.all()
+    brand = Brand.objects.all()
+    products = Product.objects.all()
 
-    context = {'cart':cart}
+    context= {'deals':deals, 'categories': categories, 'products': products, 'brand': brand}
+    return render(request, "store/products/view_products.html", context )
 
+def products_category_view(request, pk):
+    categories = Category.objects.all()
+    deals = Product.objects.filter(discount= True)
+    category = Category.objects.get(pk=pk)
+    products = Product.objects.filter(category = category)
+    brand = Brand.objects.all()
+   
+
+    context= {'deals':deals,  'products': products, 'category': category,'categories': categories, 'brand': brand}
+    return render(request, "store/products/products_category.html", context )
+
+def search(request):
+    categories = Category.objects.all()
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            products = Product.objects.filter(title__icontains = query)
+            categories = Category.objects.all()
+            context = {'products': products, "query": query, 'categories':categories}
+            return render(request, "store/products/search_products.html", context )
+    
+    context = { 'categories':categories}
+    return render(request, "store/products/search_products.html", context )
+
+    
 # ==================================================  Admin Level views ============================================= #
 # ====================================================  Products views ============================================== #
 

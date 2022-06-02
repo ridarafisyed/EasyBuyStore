@@ -6,6 +6,9 @@ from . import views
 urlpatterns = [
     path('', views.store_view, name="index" ), 
     path('product-view/<slug>/',views.product_detail_view,name='product_view'),  
+    path('products-list-view/',views.products_list_view,name='products_list_view'),  
+    path('products-category-view/<int:pk>/',views.products_category_view,name='products_category_view'), 
+    path("search/", views.search, name="search"),
 
     # admin level URLs
     # products CURD URLs

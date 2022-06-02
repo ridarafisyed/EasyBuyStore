@@ -1,4 +1,45 @@
-    <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark px-5 ">
+    <div class="nav">
+      <div class="container-fluid">
+          <nav class="navbar navbar-expand-md navbar-dark  px-5">
+              <a href="{% url 'index' %}" class="navbar-brand" style="color:white">EBS Store</a>
+              <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                  <span class="navbar-toggler-icon"></span>
+              </button>
+
+              <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                  <div class="navbar-nav mr-auto">
+                      <a href="{% url 'index' %}" class="nav-item nav-link active">Home</a>
+                      <a href="{% url 'products_list_view' %}" class="nav-item nav-link">Catalogue</a>
+                      <a href="{% url 'index' %}" class="nav-item nav-link">Categories</a>
+                      <a href="{% url 'index' %}" class="nav-item nav-link">Hot Deals</a>
+                      <a href="{% url 'index' %}" class="nav-item nav-link">Brands</a>
+                  </div>
+                  <div class="navbar-nav ml-auto">
+                    {% if request.user.is_authenticated  %}
+                      
+                      <div class="nav-item dropdown">
+                          <a  class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span><i class="fa fa-user"></i>  Account</span></a>
+                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <a href="{% url 'dashboard' %}" class="dropdown-item">Dashboard</a>
+                              <a href="{%url "logout"%}" class="dropdown-item">Logout</a>
+                          </div>
+                      </div>
+                  {% else %}
+                      <div class="nav-item dropdown">
+                          <a  class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span><i class="fa fa-user"></i>  Account</span></a>
+                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <a href="{%url 'login_view' %}" class="dropdown-item">Sign In</a>
+                              <a href="{%url "register"%}" class="dropdown-item">Sign Up</a>
+                          </div>
+                      </div>
+                  {% endif%}
+                   
+                  </div>
+              </div>
+          </nav>
+      </div>
+  </div>
+    {% comment %} <nav class="navbar navbar-expand-md navbar-dark  px-5 " style="background-color: #8e060f; ">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'index' %}">EBS Store</a>
         <button
@@ -13,9 +54,15 @@
           <span class="navbar-toggler-icon"></span>
         </button>
       </div>
+
      
         <div class="collapse navbar-collapse" style="float:right;" id="navbarSupportedContent">
+           
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li><form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" style="width:200px"aria-label="Search">
+                <button class="btn btn-outline-light" type="submit"><i class="fa fa-search"></i></button>
+              </form></li>
           {% if request.user.is_authenticated  %}
             
               <li class="nav-item">
@@ -55,4 +102,4 @@
           </ul>
         </div>
       </div>
-    </nav>
+    </nav> {% endcomment %}

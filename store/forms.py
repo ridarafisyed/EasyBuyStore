@@ -1,8 +1,5 @@
-
-
 from django import forms
-
-from .models import Product, Category
+from .models import Product, Category, Comments
 
 
 class CategoryForm(forms.ModelForm):
@@ -10,6 +7,21 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ("title",)
+
+class CommentsForm(forms.ModelForm):
+    comments =forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
+    rate = forms.IntegerField(max_value=5, min_value=1,
+        widget=forms.NumberInput( attrs={'step': 1, 'class': 'form-control', 'placeholder': '1', 'default':1 })
+    )
+
+    class Meta:
+        model = Comments
+        fields = ("comments","rate",)
+
+
+class SearchForm(forms.Form):
+    search = forms.CharField(max_length=100)
+
 
 class ProductForm(forms.ModelForm):
     name = forms.CharField(

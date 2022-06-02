@@ -50,3 +50,7 @@ box-shadow: 0 16px 48px #e3e7eb;
     height: 150px;
     object-fit: cover;
 }
+.badge{
+    position: absolute;
+    right: 0
+}

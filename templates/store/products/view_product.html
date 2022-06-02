@@ -1,19 +1,23 @@
 {% extends "../../base.html" %} 
-
+{% load static%}
+{% block head  %}
+  <link href="{% static '/css/product-cards.css' %}" rel="stylesheet"/>  
+ {% endblock %}
 {%block content%} 
-<div class="container">
-    {% include "../../components/header.html"%}
-    <div class="container">
+<div class="container px-4">
+    <div class="container px-4">
         <div class="row gy-5 row-cols-2">
-            <div class="col"><img src={{product.image}} class="card-img-top" alt="product-image"></div>
+            <div class="col product-detail">
+                <img src={{product.image}} class="card-img-top" alt="product-image">
+            </div>
             <div class="col">
                 <h3 style="text-transform: capitalize;">{{product.title}}</h3>
                 <h4 style="color: maroon" class="py-2">$ {{product.price}}</h4>
-                <h5>{{product.category}}</h5>
-                <p class="py-2">{{product.description}}</p>
-
-                {% if product.quantity > 0%}<p style="color: green"> In Stock </p>{% else %} <p style="color: gray">Out of Stock</p> {% endif%}
-                
+                <h5 class="text-uppercase" style="color: gray"><span style="color: #888; font-size:0.9rem; margin : 1rem">Model Year : </span>{{product.year}}</h5>
+                <h5 class="text-uppercase" style="color: gray"><span style="color: #888; font-size:0.9rem; margin : 1rem">Category :  </span>{{product.category}}</h5>
+                <h5 class="text-uppercase" style="color: gray"><span style="color: #888; font-size:0.9rem; margin : 1rem">Sub-Category: </span> {{product.sub_category}}</h5>
+ 
+                {% if product.quantity > 0%}<p style="color: green"> In Stock </p>{% else %} <p style="color: gray">Out of Stock</p> {% endif%}               
                 <form action="{% url "cart:cart_add" product.id %}" method="post" class="row g-3">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
@@ -29,6 +33,88 @@
                 </form>
            </div>
         </div>
+    
+        <div>
+            <h5>Description</h5>
+            <p class="py-2">{{product.description}}</p>
+        </div>
+        <div>
+            <h5>Reivew & Ratings<h5>
+                {% if request.user.is_authenticated %}
+                    <form action="{% url "cart:cart_add" product.id %}" method="post" class="row g-3">
+                        {% csrf_token %}
+                        {{ commentform.non_field_errors }}
+                        {{commentform.as_p}}
+                        
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-success ">Add to cart</button>
+                        </div>
+                    </form>
+                {% endif%}
+            {%if comments%}
+                {%for comment in  comments%}
+                <div class="card">
+                    <div class="card-header">
+                        {{comment.user.first_name}} -   
+                    </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                        <p>{{comment.comment}}.</p>
+                        {% comment %} <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer> {% endcomment %}
+                        </blockquote>
+                    </div>
+                </div>
+                {%endfor%}
+                {% else %}
+                <p class="py-2"> no review found </p>
+            {% endif%}
+        </div>
     </div>
-</div>
+
+          <p class="text-center"> Sorry No deal for today..! Please come again. </p>
+      </div>
+  {% if same_category%} 
+    <h3 class="text-center my-4 heading-title">Similar Products</h3>
+      <div class="row row-cols-1 row-cols-md-4 g-4 pl-5"> 
+          {%for product in  same_category%}
+                    <div class="col">
+                        <div class="card" style="width: 18rem;">
+                        <img src="{{product.image}}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                            <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
+                            <h5 >Rs. {{product.price}}</h5> 
+                            <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o	"></i></span></p>
+                            <div class="text-center"> 
+                                <button href="#"  class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></button>
+                                <button href="{% url 'product_view' product.id%}" class="btn btn-light red"><i class="fa fa-heart"></i></button> </div>
+                        </div>
+                        </div>
+                    </div>
+                {% endfor %}        
+          </div>        
+  {%endif%}
+  {% if same_brand%}
+    <h3 class="text-center my-4 heading-title">Products with Same Brands</h3> 
+    <div class="row gy-5 gx-5 row-cols-4">
+      {% for product in same_brand %}
+        <div class="col pl-2">
+          <div class="card" style="width: 18rem;">
+            <img src="{{product.image}}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h6 class="card-title">
+                <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
+              <h5 >Rs. {{product.price}}</h5> 
+              <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o	"></i></span></p>
+              <div class="text-center"> 
+              
+                  <button href="#"  class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></button>
+                  <button href="{% url 'product_view' product.id%}" class="btn btn-light red"><i class="fa fa-heart"></i></button> </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  {%endif%} 
 {%endblock%}

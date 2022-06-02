@@ -1,6 +1,39 @@
 <!-- @format -->
 <header class="header" style="color: #8e060f; align: center py-10">
-  <h1>ESB Store</h1>
-  <p>Easy Buy & Sale Store</p>
+  <div class="bottom-bar">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <div class="logo">
+                            <a href="{% url "index" %}">
+                                <h1>ESB Store</h1>
+                                    <p>Easy Buy & Sale Store</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="search">
+                            <form action="{% url "search" %}"method="post">
+                                {% csrf_token %}
+                            <input id="query" name="query" type="text"  placeholder="Search" />
+                            <button type="submit"><i class="fa fa-search"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="user">
+                             <a href="wishlist.html" class="btn wishlist">
+                                <i class="fa fa-heart"></i>
+                                <span>(0)</span>
+                            </a>
+                            <a href="cart.html" class="btn cart">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span>(0)</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 </header>
 

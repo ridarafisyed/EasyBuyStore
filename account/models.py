@@ -1,4 +1,4 @@
-
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -41,7 +41,7 @@ class UserAccountManager(BaseUserManager):
         return user
 
 # Create your models here.
-class UserAccount(AbstractBaseUser):
+class UserAccount(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True)
     first_name=models.CharField(max_length=255)
     last_name=models.CharField(max_length=255)

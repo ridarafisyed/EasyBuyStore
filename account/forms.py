@@ -53,14 +53,14 @@ class SignUpForm(UserCreationForm):
             }
         )
     )
-    password1 = forms.CharField(
+    password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control' 
             }
         )
     )
-    password2 = forms.CharField(
+    confirm_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control' 

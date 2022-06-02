@@ -1,53 +1,36 @@
 {% extends "base.html" %} 
 {% load static%}
 
-{% block head  %}<link
-      href="{% static '/css/product-cards.css' %}"
-      rel="stylesheet"
-    />
-  
+
+{% block head  %}
+  <link href="{% static '/css/product-cards.css' %}" rel="stylesheet"/>  
  {% endblock %}
 
 {% block content %}
 
-{% include "components/header.html"%}
+
 {% include "components/banner.html"%}
-{% include "components/navbar.html"%}
+
 
 <div class="container">
-  {% if categories%} 
-<h3 class="text-center my-4 heading-title">Top categories</h3>
-  <div class="row gy-5 gx-5 row-cols-4 ">
-      {% for category in categories %}
-        <div class="col  text-center">
-          <div class="card" style="width: 18rem;">
-            <img src="https://picsum.photos/200" class="card-img-top" alt="...">
-            <div class="card-body">
-              <h4 class="text-uppercase">{{category.title}}</h4>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>        
-  
-  {%endif%}
-  {% if deals%} 
+  {% if deals %} 
   <h3 class="text-center my-4 heading-title">Hot Deals</h3>
-  <div class="row gy-5 gx-5 row-cols-4 ">
+  <div class="row row-cols-1 row-cols-md-4 g-4">
       {% for product in deals %}
-        <div class="col  text-center">
-          <div class="card" style="width: 18rem;">
-            <img src="https://picsum.photos/200" class="card-img-top" alt="...">
+        <div class="col">
+          <div class="card">
+            <p style="margin-left: auto; margin-right: 0; padding-top:0.5rem; padding-right:0.5rem">
+              <span class="badge rounded-pill bg-danger">Hot deal</span>
+            </p>
+            <img src="{{product.image}}" class="card-img-top" alt="...">
             <div class="card-body">
-              <h5 class="card-title" style="overflow: hidden;
-                                        text-overflow: ellipsis;
-                                        display: -webkit-box;
-                                        -webkit-line-clamp: 1; /* number of lines to show */
-                                                line-clamp: 1; 
-                                        -webkit-box-orient: vertical;"><a href="#">{{product.title}}</a></h5>
-              <h4 >Rs. {{product.price}}</h4> 
-              <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o	"></i></span></p>
-              <div > <a href="{% url 'add-to-cart' product.slug %}" class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></a> <a href="#" class="btn btn-light red"><i class="fa fa-heart"></i></a> </div>
+             <h6 class="card-title">
+                <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
+              <h5 >Rs. {{product.disc_price}} </h5> 
+              <p><span style = "text-decoration: line-through; color: gray">Rs. {{product.price}} </span><span style = "color: gray"> {{product.disc_value}}% </span></p>
+                <p></p>
+             
+              <div class="text-center"> <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></a> <a href="#" class="btn btn-light red"><i class="fa fa-heart"></i></a> </div>
             </div>
           </div>
         </div>
@@ -59,26 +42,39 @@
         <p class="text-center"> Sorry No deal for today..! Please come again. </p>
       </div>
   {%endif%}
+  {% if categories%} 
+    <h3 class="text-center my-4 heading-title">Top Categories</h3>
+      <div class="row row-cols-1 row-cols-md-4 g-4"> 
+          {% for category in categories %}
+            <div class="col-md-3  text-center">
+              <div class="card" style="width: 18rem;">
+                <img src="{{ category.get_url }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title text-uppercase"><a href="#">{{category.title}}</a></h5>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+        
+          </div>        
+  {%endif%}
+
+
 
   {% if products%}
   
     <h3 class="text-center my-4 heading-title">Products</h3> 
     <div class="row gy-5 gx-5 row-cols-4 ">
       {% for product in products %}
-        <div class="col  text-center">
+        <div class="col">
           <div class="card" style="width: 18rem;">
             <img src="{{product.image}}" class="card-img-top" alt="...">
             <div class="card-body">
-              <h5 class="card-title" style="overflow: hidden;
-                                        text-overflow: ellipsis;
-                                        display: -webkit-box;
-                                        -webkit-line-clamp: 1; /* number of lines to show */
-                                                line-clamp: 1; 
-                                        -webkit-box-orient: vertical;">
-                                        <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h5>
-              <h4 >Rs. {{product.price}}</h4> 
+              <h6 class="card-title">
+                <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
+              <h5 >Rs. {{product.price}}</h5> 
               <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o	"></i></span></p>
-              <div > 
+              <div class="text-center"> 
               
                   <button href="#"  class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></button>
                   <button href="{% url 'product_view' product.id%}" class="btn btn-light red"><i class="fa fa-heart"></i></button> </div>
@@ -88,6 +84,21 @@
       {% endfor %}
       </div>
     </div>
+  {%endif%} 
+
+   {% if brands%} 
+    <h3 class="text-center my-4 heading-title">Top Brands</h3>
+      <div class="brand">
+            <div class="container-fluid">
+                <div class="brand-slider"><div class="brand-item">
+                  {% for brand in brands %}
+                    <img src="{{ brand.get_url}}"  alt="">
+                    {% endfor %}
+                </div></div>
+            </div>
+        </div>
+
+  
   {%endif%}
-</div>
+    
 {%endblock%}

@@ -1,0 +1,51 @@
+
+{% extends "../../base.html" %} 
+{% load static%}
+{% block head  %}
+  <link href="{% static '/css/product-cards.css' %}" rel="stylesheet"/>  
+ {% endblock %}
+{%block content%} 
+<div class="row">
+    <div class="col-2 px-5">
+        <h5 class="text-uppercase">Catagory<h5>
+        <div class="flex-column side-links">
+          {% if categories%} 
+            {% for category in categories %}
+              <a class="nav-link text-uppercase" href="{% url 'products_category_view' category.id%}">{{category.title}}</a>
+            {% endfor %}
+          {%endif%}  
+        </div>
+    </div>
+    <div class="col-8"> 
+      <h3 class="text-center my-4  heading-title">Search Result</h3> 
+      
+      {% if products%}
+      <p>Total result found : {{products.count}}</p>
+        <div class="row gy-5 gx-3 row-cols-4 ">
+          {% for product in products %}
+            <div class="col">
+              <div class="card" style="width: 18rem;">
+                <img src="{{product.image}}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h6 class="card-title">
+                    <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
+                  <h5 >Rs. {{product.price}}</h5> 
+                  <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o	"></i></span></p>
+                  <div class="text-center"> 
+                  
+                      <button href="#"  class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></button>
+                      <button href="{% url 'product_view' product.id%}" class="btn btn-light red"><i class="fa fa-heart"></i></button> </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          </div>
+        </div>
+        {%else%}
+        <p> No record found</p>
+      {%endif%} 
+    </div>
+
+</div>
+
+{% endblock%}

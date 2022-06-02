@@ -1,28 +1,64 @@
-
+from unicodedata import category
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.shortcuts import reverse
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
+import datetime
+
 User = get_user_model()
 
 
+def current_year():
+    return datetime.date.today().year
+
+def max_value_current_year(value):
+    return MaxValueValidator(current_year())(value)
 # Create your models here.
 # products categories
 class Category(models.Model):
     title = models.CharField(max_length=255, unique=True)
+    # slug = models.SlugField(max_length=255)
+    image = models.ImageField(upload_to='uploads/', null=True, blank=True, verbose_name="")
+
+    def __str__(self):
+        return self.title
+    @property
+    def get_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        else:
+            return "/static/img/no_image.jpg"
+
+class SubCategory(models.Model):
+    category = models.ForeignKey(Category,related_name='sub_category', on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
-    ordering = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ['ordering']
-    
+        unique_together = ('category', 'title',)
+        
     def __str__(self):
         return self.title
     
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
-        super(Category, self).save(*args, **kwargs)
+        super(SubCategory, self).save(*args, **kwargs)
+
+class Brand(models.Model):
+    title = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='logos/', null=True, blank=True, verbose_name="")
+
+    def __str__(self):
+        return self.title
+    @property
+    def get_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        else:
+            return "/static/img/no_image.jpg"
 
 # products model with user/store who add and category as foreignkey
 class Product(models.Model):
@@ -32,14 +68,20 @@ class Product(models.Model):
     slug = models.SlugField(max_length=255)
     description = models.TextField(blank=True, null=True)
     discount = models.BooleanField(default=False)
-    disc_value = models.PositiveIntegerField(default=0, blank=True, null=True)
+    disc_value = models.DecimalField(max_digits=4, decimal_places=2,default=0, blank=True, null=True)
     disc_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
+    sub_category = models.ForeignKey(SubCategory, related_name='products', on_delete=models.CASCADE)
+    brands = models.ForeignKey(Brand, related_name='brand_products', on_delete=models.CASCADE)
+    model = models.CharField(max_length=255, null=True, blank=True)
+    year = models.IntegerField( validators=[MinValueValidator(1984), max_value_current_year])
+    color = models.CharField(max_length=255, blank=True )
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
     added_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='uploads/', null=True, blank=True, verbose_name="")
-    # thumbnail = models.ImageField(upload_to='uploads/', blank=True, null=True)
+
 
     class Meta:
         ordering = ['-added_at']
@@ -52,10 +94,11 @@ class Product(models.Model):
             'slug': self.slug
         })
     @property
-    def get_add_to_cart_url(self):
-        return reverse("store:add-to-cart", kwargs={
-            'slug': self.slug
-        })
+    def get_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        else:
+            return "/static/img/no_image.jpg"
 
     # to get the products by category
     @property
@@ -85,29 +128,31 @@ class Product(models.Model):
         
         super(Product, self).save(*args, **kwargs)
 
+class Images(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
 
-class Cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    # cart_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    completed = models.BooleanField(default=False)
-    device = models.CharField(max_length=100)
+    title = models.CharField(max_length=255, blank=True)
+    image = models.ImageField(upload_to='images/', null=True, blank=True, verbose_name="")
 
-    @property
-    def num_of_items(self):
-        cart_item = self.cartitems_set.all()
-        total = sum([qty.quantity for qty in cart_item])
-        return total
+    def __str__(self) -> str:
+        return self.title 
+
+
+
+
+class Comments(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
+    subject = models.CharField(max_length=255, blank=True)
+    comment = models.CharField(max_length=255, blank=True)
+    rate = models.PositiveIntegerField(default=1)
+
     
-    @property
-    def cart_total(self):
-        cart_item = self.cartitems_set.all()
+    
 
-class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    item = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-
+    def __str__(self) -> str:
+        return self.user + '' + self.product
+        
 
 # class SaveItem(models.Model):
 #     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
