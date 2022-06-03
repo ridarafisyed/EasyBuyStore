@@ -58,6 +58,18 @@ def products_category_view(request, pk):
     context= {'deals':deals,  'products': products, 'category': category,'categories': categories, 'brand': brand}
     return render(request, "store/products/products_category.html", context )
 
+def add_review(request, pk):
+    if request.method == 'POST':
+        form = CommentsForm(request.POST)
+        if form.is_valid:
+            cd = form.cleaned_data
+            user = request.user
+            product = Product.objects.get(pk = pk)
+            comment = Comments.objects.create(user=user, product= product,comment=cd['comment'], rate=cd['rate'])
+            messages.info(request, "Your review is submitted successfully!")
+            return HttpResponseRedirect(request.path_info)
+    return HttpResponseRedirect(request.path_info)
+
 def search(request):
     categories = Category.objects.all()
     if request.method == 'POST':

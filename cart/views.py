@@ -34,7 +34,7 @@ def cart_decrement(request, product_id):
 def cart_remove(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.decrement(product)
+    cart.remove(product)
     return redirect('cart:cart_detail')
 
 def cart_detail(request):

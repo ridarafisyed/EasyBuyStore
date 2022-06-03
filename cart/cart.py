@@ -31,7 +31,7 @@ class Cart(object):
             # self.cart[product_id][quantity] = quantity
             print (self.cart)
         else:
-            self.cart[product_id][quantity] = quantity
+            self.cart[product_id]['quantity'] = quantity
 
         self.save()
         

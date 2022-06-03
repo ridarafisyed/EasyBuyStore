@@ -1,15 +1,12 @@
 {% extends "../../base.html" %} 
 {% load static %}
-
+{%load humanize%}
 
 {% block title %}Shopping Cart | {% endblock %}
-
-{% include "components/header.html"%}
 
 
 {%block content%} 
 <div class="container">
-    {% include "../../components/header.html"%}
   
    <div class="container">           
        <a href="{% url "index"%}" class="btn btn-warning my-3"> <i class="	fa fa-long-arrow-left"> </i>  Continue Shopping </a>
@@ -47,7 +44,7 @@
                                         </a>
                                     </td>
                                     <td>{{product.title}}</td>
-                                    <td>Rs. {{item.price}}</td>
+                                    <td>Rs. {{item.price|intcomma}}</td>
                                    
                                     <td class="text-center"> 
                                         <form action="{% url "cart:cart_decrement" product.id%}" method="post">
@@ -55,13 +52,20 @@
                                             {% csrf_token %}
                                         </form>
                                                 {{item.quantity}}
+                                        
                                         <form action="{% url "cart:cart_increment" product.id%}" method="post">
+                                          {% if item.quantity < 4%}
                                             <button type="submit" class="btn btn-light"><i class="fa fa-plus"></i></button>
                                              {% csrf_token %}
+                                            {%else%}
+                                            <button type="submit" disabled class="btn btn-light"><i class="fa fa-plus"></i></button>
+                                            {% endif%}
                                         </form>
+                                        
+
                                     </td>
                                    
-                                    <td>Rs. {{item.total_price}}</td>
+                                    <td>Rs. {{item.total_price|intcomma}}</td>
                                      <td>
                                         <form action="{% url "cart:cart_remove" product.id%}" method="post">
                                             <button type="submit" class="btn btn-danger" > X </button>
@@ -77,7 +81,7 @@
                                 <tr class="table-light">
                                     <td>Total</td>
                                     <td colspan="4"></td>
-                                    <th>{{cart.get_total_price}}</th>
+                                    <th>{{cart.get_total_price|intcomma}}</th>
                                 </tr>
                             </tfoot>
                     </table>
@@ -95,23 +99,23 @@
                             <thead>
                                 <tr>
                                 <th>Subtotal:</th>
-                                <th>$ {{cart.get_total_price}}</th>
+                                <th>$ {{cart.get_total_price|intcomma}}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>Shipping</td>
-                                    <td>$ {{cart.shippment}}</td>
+                                    <td>$ {{cart.shippment|intcomma}}</td>
                                 </tr>
                                 <tr>
                                     <td>Tax : {{cart.tax}}%</td>
-                                    <td>$ {{cart.get_tax}}</td>
+                                    <td>$ {{cart.get_tax|intcomma}}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <td>Total</td>
-                                    <td>$ {{cart.get_total}}</td>
+                                    <td>$ {{cart.get_total|intcomma}}</td>
                                 </tr>
                             </tfoot>
                         </table>

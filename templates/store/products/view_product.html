@@ -11,7 +11,16 @@
                 <img src={{product.image}} class="card-img-top" alt="product-image">
             </div>
             <div class="col">
+                
                 <h3 style="text-transform: capitalize;">{{product.title}}</h3>
+                <span>{% for i in '01234'|make_list%}
+                        {% if i <  product.reviews.rate%}
+                        <i class="fa fa-star"></i> 
+                        {%else %}
+                          <i class="fa fa-star" style="color:#ddd"></i> 
+                        {% endif%}
+                    {% endfor %}  ({{ product.reviews.count}})
+                </span>
                 <h4 style="color: maroon" class="py-2">$ {{product.price}}</h4>
                 <h5 class="text-uppercase" style="color: gray"><span style="color: #888; font-size:0.9rem; margin : 1rem">Model Year : </span>{{product.year}}</h5>
                 <h5 class="text-uppercase" style="color: gray"><span style="color: #888; font-size:0.9rem; margin : 1rem">Category :  </span>{{product.category}}</h5>
