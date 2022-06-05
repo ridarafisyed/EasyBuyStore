@@ -5,11 +5,6 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import uuid
 from django.conf import settings
 
-from creditcards.models import CardNumberField, CardExpiryField, SecurityCodeField
-from django.forms import DateField
-
-
-
 CHOICES=[(0,'Client'),
          (1,'Customer')]
 

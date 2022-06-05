@@ -1,6 +1,6 @@
 from decimal import Decimal
 import re
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import  redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -9,7 +9,7 @@ from order.models import Order, OrderTransaction
 
 
 from .models import Store, PaymentDetail, Address, UpgradeTransaction
-from store.models import Product, Category
+from store.models import Product
 from .forms import LoginForm, PaymentForm, SignUpForm, StoreForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
