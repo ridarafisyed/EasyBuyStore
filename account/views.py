@@ -1,16 +1,20 @@
-from django.shortcuts import redirect, render
+from decimal import Decimal
+import re
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.views.decorators.http import require_POST
-from order.models import Order, Transaction
+from order.models import Order, OrderTransaction
 
 
-from .models import Store
+from .models import Store, PaymentDetail, Address, UpgradeTransaction
 from store.models import Product, Category
-from .forms import LoginForm, SignUpForm
+from .forms import LoginForm, PaymentForm, SignUpForm, StoreForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
+from order.models import BillingAddress
+from order.forms import BillingAddressForm
 
 User = get_user_model()
 
@@ -25,23 +29,13 @@ def register_view(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            if user.user_type == 0:
-                store = Store.objects.create(name=user.username, created_by=user)
-                store.save()
-                messages.info(request, "Your Vendor Account has been Registered Successful!")
-               
-            else: 
-                messages.info(request, "Your Account has been Registered Successful!")
-              
+            messages.info(request, "Your Account has been Registered Successful!")       
             return redirect('login_view')
         else: 
             messages.warning(request, "The form is not valid. Please Try Again.. ")
-  
-
     else:
         form = SignUpForm()
     return render(request, 'auth/register.html',{'form': form, 'msg': msg})
-
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -68,18 +62,23 @@ def login_view(request):
 def dashboard_view(request):    
     user = request.user
     if user.is_superuser:
-        
         total_stores = Store.objects.all().count()
         total_customers = User.objects.filter(user_type = 1).count()
         total_clients = User.objects.filter(user_type = 0).count()
         total_users = User.objects.all().count()
         total_products = Product.objects.all().count()
         total_orders = Order.objects.all().count()
-        total_transactions = Transaction.objects.all().count()
-        transactions = Transaction.objects.filter(customer = request.user)
-        balance = 0
+        total_transactions = UpgradeTransaction.objects.all().count()
+        all_transactions = OrderTransaction.objects.all()
+        transactions = OrderTransaction.objects.filter(customer = request.user)
+        total = 0
         for transaction in transactions:
-            balance += transaction.amount
+            total += transaction.amount
+
+        user.balance = total
+        all_balance = 0
+        for transaction in all_transactions:
+            all_balance += transaction.amount
 
         if total_transactions is None:
             total_transactions = 0
@@ -112,15 +111,155 @@ def dashboard_view(request):
             'total_products':total_products, 
             'total_orders': total_orders,
             'total_transactions': total_transactions,
-            'balance' : balance
+            'all_balance': all_balance,
+            'balance' : user.balance
         }
         return render(request, 'dashboard/admin_main.html', context )
 
     else:             
         if user.user_type == 0 :
-            store = request.user.store
-            products =  Product.objects.filter(vendor=request.user)
+            store = Store.objects.filter(owner = user)
+           
+            if store is not None:
+                store = store
+                products =  Product.objects.filter(vendor=request.user)
+            else:
+                store = None
+                products = None
         else: 
             store = None
             products = None
         return render(request, 'dashboard/main.html', {'user':user, 'store':store, 'products':products})
+
+def profile_view(request):
+    cc_detail = PaymentDetail.objects.filter(user = request.user)
+    billing_address = BillingAddress.objects.filter(customer = request.user)
+    address = Address.objects.filter(user = request.user)
+    context = { 'cc_detail':cc_detail, 'billing_address':billing_address, 'address': address}
+    return render(request, "dashboard/profile.html", context)
+def upgrade_account(request):
+
+    return render(request, "dashboard/upgrade_account/upgrade_account.html")
+
+def billing_address(request):
+    address = BillingAddress.objects.filter(customer = request.user).exists()
+    if address:
+        address = BillingAddress.objects.get(customer = request.user)
+    if request.method == 'POST':
+            billingAddressForm = BillingAddressForm(request.POST)
+            # adding Address
+        
+            if billingAddressForm.is_valid():
+                cd = billingAddressForm.cleaned_data
+                if address:
+                    address= BillingAddress.objects.update(  
+                    customer= request.user, 
+                    first_name = cd['first_name'],
+                    last_name = cd['last_name'],
+                    street_address = cd['street_address'],
+                    city = cd['city'],
+                    postcode = cd['postcode'],
+                    state = cd['state'],
+                    country = cd['country'],
+                )
+                else:
+                    address= BillingAddress.objects.create(  
+                    customer= request.user, 
+                    first_name = cd['first_name'],
+                    last_name = cd['last_name'],
+                    street_address = cd['street_address'],
+                    city = cd['city'],
+                    postcode = cd['postcode'],
+                    state = cd['state'],
+                    country = cd['country'],
+                    )
+                
+                messages.success(request , "Address save successfully")
+                return redirect('upgrade_account')  
+        
+    else:
+        billingAddressForm = BillingAddressForm()
+    return render(request, 'dashboard/upgrade_account/billing_address.html', {'address': address, 'billingAddressForm': billingAddressForm})
+
+def card_detail(request):
+    cc_detail = PaymentDetail.objects.filter(user = request.user)
+    user = request.user
+    form = PaymentForm()
+    if request.method == 'POST':
+        form  = PaymentForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            if cc_detail is not None:
+                cc_detail = PaymentDetail.objects.update(  
+                    user = user,
+                    cc_fullname = cd['cc_fullname'],
+                    cc_number = cd['cc_number'],
+                    cc_expiry = cd['cc_expiry'],
+                    cc_code = cd['cc_code'],
+                    )
+            else:
+                cc_detail= PaymentDetail.objects.create(  
+                    user = user,
+                    cc_fullname = cd['cc_fullname'],
+                    cc_number = cd['cc_number'],
+                    cc_expiry = cd['cc_expiry'],
+                    cc_code = cd['cc_code'],
+                )
+            
+
+            messages.info(request , "Account Upgrade Successfully")
+            return redirect('upgrade_confirmation')
+    else:
+        form = PaymentForm()
+    context ={'form': form, 'cc_detail': cc_detail}
+    return render(request, 'dashboard/upgrade_account/upgrade_account.html', context)
+
+def upgrade_confirmation(request):
+
+    amount = Decimal(500.00).quantize(Decimal('.01'))
+    upgrade_transaction = UpgradeTransaction.objects.create(customer = request.user, amount = amount)
+    upgrade_transaction.save()
+    request.user.user_type = 0
+    request.user.is_client = True
+    request.user.save()
+    transaction = UpgradeTransaction.objects.filter(customer = request.user).last()
+    form = StoreForm()
+    if request.method == 'POST':
+        form  = StoreForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            store= Store.objects.create(  
+                    owner = request.user,
+                    name = cd['title']
+                )
+            store.is_store_active = True
+            redirect('dashboard')
+    else: 
+        form = StoreForm()
+            
+
+    context = {'transaction': transaction, 'form':form}
+    return render(request, "dashboard/upgrade_account/upgrade_confirmation.html", context)
+
+
+def create_store(request):
+    form = StoreForm()
+    if request.method == 'POST':
+        form  = StoreForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            store= Store.objects.create(  
+                    owner = request.user,
+                    name = cd['title']
+                )
+            store.is_store_active = True
+            messages.success(request , "Store is created successfully")
+            redirect('dashboard')
+    else: 
+        form = StoreForm()
+            
+
+    context = {'form':form}
+    return render(request, "dashboard/upgrade_account/create_store.html", context)
+
+    

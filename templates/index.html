@@ -1,6 +1,6 @@
 {% extends "base.html" %} 
 {% load static%}
-
+{% load humanize%}
 
 {% block head  %}
   <link href="{% static '/css/product-cards.css' %}" rel="stylesheet"/>  
@@ -19,18 +19,25 @@
       {% for product in deals %}
         <div class="col">
           <div class="card">
+
+            
             <p style="margin-left: auto; margin-right: 0; padding-top:0.5rem; padding-right:0.5rem">
-              <span class="badge rounded-pill bg-danger">Hot deal</span>
+              <span class="badge rounded-pill bg-danger">Hot deal </span>
+              {% now "Y" as current_year %}
+              {%if product.year == current_year %}
+                <span class="badge rounded-pill bg-primary">Latest</span>
+              {% endif %}
             </p>
             <img src="{{product.image}}" class="card-img-top" alt="...">
             <div class="card-body">
              <h6 class="card-title">
                 <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
-              <h5 >Rs. {{product.disc_price}} </h5> 
-              <p><span style = "text-decoration: line-through; color: gray">Rs. {{product.price}} </span><span style = "color: gray"> {{product.disc_value}}% </span></p>
+              <h5 >Rs. {{product.disc_price|intcomma}} </h5> 
+              <p><span style = "text-decoration: line-through; color: gray">Rs. {{product.price|intcomma}} </span><span style = "color: gray"> {{product.disc_value}}% </span></p>
                 <p></p>
              
-              <div class="text-center"> <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></a> <a href="#" class="btn btn-light red"><i class="fa fa-heart"></i></a> </div>
+              <div class="text-center"> <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></a> 
+                <a href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fas fa-binoculars"></i></a> </div>
             </div>
           </div>
         </div>
@@ -68,16 +75,25 @@
       {% for product in products %}
         <div class="col">
           <div class="card" style="width: 18rem;">
+            <p style="margin-left: auto; margin-right: 0; padding-top:0.5rem; padding-right:0.5rem">
+              {% if product.discount%}
+                <span class="badge rounded-pill bg-danger">Hot  deal </span>
+              {% endif %}
+              {% now "Y" as current_year %}
+              {%if product.year == current_year %}
+                <span class="badge rounded-pill bg-primary">Latest</span>
+              {% endif %}
+            </p>
             <img src="{{product.image}}" class="card-img-top" alt="...">
             <div class="card-body">
               <h6 class="card-title">
                 <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
-              <h5 >Rs. {{product.price}}</h5> 
+              <h5 >Rs. {{product.price|intcomma}}</h5> 
               <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o	"></i></span></p>
               <div class="text-center"> 
               
                   <button href="#"  class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></button>
-                  <button href="{% url 'product_view' product.id%}" class="btn btn-light red"><i class="fa fa-heart"></i></button> </div>
+                  <button href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fa fa-binoculars"></i></button> </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,4 @@
 <!-- @format -->
-
 {% extends "base.html" %} {% load static %} 
 {% block title %}Login | {% endblock %}
 {% block content %}
@@ -10,7 +9,9 @@
         <span><i class="fa fa-warning" style="font-size:24px;"> </i>   {{msg}}</span>
       </div>
     {% endif %}
-    <h1>Login</h1>
+    <div class ="card p-3 mx-auto d-block"  style="width: 30rem;">
+    <h3 class="card-title text-center text-uppercase">Sign In</h3>
+    <div class="card-body">
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %} {{form.as_p}}
       <button
@@ -26,6 +27,8 @@
       <a href="{% url 'register'%}">Here!</a>
     </span>
   </div>
+</div>
+</div>
 </div>
 
 {%endblock%}

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOGIN_URL ="login_view"
@@ -70,6 +71,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'cart.context_processor.cart',
+                'store.context_processor.categories',
+                'store.context_processor.brands'
             ],
         },
     },
@@ -122,8 +125,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST ="smtp.gmail.com"
 EMAIL_PORT=587
 EMAIL_USE_TLS= True
-EMAIL_HOST_USER = "samplereciver1234@gmail.com"
-EMAIL_HOST_PASSWORD = "ammyjanu007"
+EMAIL_HOST_USER = "YOUR_EMAIL_ADDRESS"
+EMAIL_HOST_PASSWORD = "YOUR_PASSWORD"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
@@ -149,5 +152,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'account.UserAccount'
 
 CART_SESSION_ID ='cart'
-
-CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"

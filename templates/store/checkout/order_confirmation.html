@@ -1,0 +1,73 @@
+{% extends "../../base.html" %} 
+{% load static %}
+{% load humanize%}
+
+{% block title %}Checkout | {% endblock %}
+
+{% include "../components/header.html"%}
+
+
+{%block content%} 
+ 
+<div class="container">
+
+    <h4>Payment Confirmation</h4>
+    <div class="row">
+        
+        <div class="col-8"> 
+            <p> Your order is placed Successfully!</p> 
+            <p>Order Tracking Number: <b>{{order.order_id}}</b></p>         
+            <p>You will Recive your order with in next 4 working days </p>
+            <p>Nice Shopping with you Have a nice day</p>
+                    
+        </div>
+         
+        <div class="col-4">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h6 class="card-title">Mailing Address</h6>
+                    <hr/>
+                    {% if address%}
+                        <h5 class="card-title">{{address.full_name}}</h5>
+                        {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
+                        <p class="card-text">
+                            <p>{{address.street_address}}</p>
+                            <p>{{address.city}}</p>
+                            <p>{{address.country}}</p>
+                        </p>
+                    {% else%} 
+                        <h5 class="card-title">No address found</h5>
+                        <p class="card-text">
+                            please add your address
+                        </p>
+                    {% endif%}
+                </div>
+            </div>
+        <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h6 class="card-title">Order Detail</h6>
+                    <hr/>
+                    {% if order%}
+                        <h5 class="card-title">Order Summary</h5>
+                        {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
+                        <p class="card-text">
+                            <p>Tracking # {{order.order_id}}</p>
+                            <p> Total Item {{order.order_items.count}} </p>
+                            <p>Rs: {{order.total_paid| intcomma}}</p>
+                        </p>
+                       
+                    {% else%} 
+                        <h5 class="card-title">No Order found</h5>
+                        <p class="card-text">
+                            please add your order
+                        </p>
+                    {% endif%}
+                </div>
+            </div>
+        
+        </div>
+        
+    </div>    
+
+</div>
+{%endblock%}

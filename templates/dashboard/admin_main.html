@@ -1,25 +1,34 @@
 
 {% extends "./admin_dashboard.html" %} 
-
+{%load humanize%}
 {%block dashboard_content%} 
-    <h2>Dashboard</h2>
-    <h4>Hi, {{user.username}}</h4>  
+    <h2 >Dashboard</h2>
+    <h4 >Hi <span style="text-transform: capitalize">{{user.username}}</span>, Welcome to The Your Dashboard.. </h4>  
         <div class="row  my-5">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Total Balance</h5>
-                        <h2 class="card-text">{{balance}}</h2>
-                        <a href={%url 'order:admin_transaction_history'%} class="btn btn-success">Your Transaction History</a>
+                        <h2 class="card-text">{{balance|intcomma}}</h2>
+                        <a href={%url 'order:admin_transaction_history'%} class="btn btn-primary">My Transaction History</a>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Transactions</h5>
+                        <h5 class="card-title">Total Transactions</h5>
                         <h2 class="card-text">{{total_transactions}}</h2>
-                        <a href={%url 'order:admin_transaction_history'%} class="btn btn-success">Company Transaction History</a>
+                        <a href={%url 'order:admin_total_transaction_history'%} class="btn btn-success">All Transaction History</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Transaction Amount</h5>
+                        <h2 class="card-text">{{all_balance|intcomma}}</h2>
+                        <a href={%url 'order:admin_total_transaction_history'%} class="btn btn-warning">All Transaction History</a>
                     </div>
                 </div>
             </div>
@@ -30,7 +39,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Total Products</h5>
                         <h2 class="card-text">{{total_products}}</h2>
-                        <a href="{%url 'products' %}" class="btn btn-primary"> View Product </a>
+                        <a href="{%url 'admin_products_views' %}" class="btn btn-primary"> View Product </a>
                     </div>
                 </div>
             </div>
@@ -39,7 +48,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Total Orders</h5>
                         <h2 class="card-text">{{total_orders}}</h2>
-                        <a href="#" class="btn btn-success">View Orders</a>
+                        <a href="{% url 'order:admin_order_view'%}" class="btn btn-success">View Orders</a>
                     </div>
                 </div>
             </div>
@@ -48,7 +57,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Total Stores </h5>
                         <h2 class="card-text">{{total_stores}}</h2>
-                        <a href="#" class="btn btn-warning">View Stores</a>
+                        <a href="{%url 'admin_stores_view' %}" class="btn btn-warning">View Stores</a>
                     </div>
                 </div>
             </div>
@@ -59,7 +68,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Total Users</h5>
                         <h2 class="card-text">{{total_users}}</h2>
-                        <a href="{%url 'products' %}" class="btn btn-primary"> View Users </a>
+                        <a href="{%url 'admin_users_view' %}" class="btn btn-primary"> View Users </a>
                     </div>
                 </div>
             </div>
@@ -68,7 +77,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Total Customers</h5>
                         <h2 class="card-text">{{total_customers}}</h2>
-                        <a href="#" class="btn btn-success">View Customers</a>
+                        <a href="{%url 'admin_users_view' %}" class="btn btn-success">View Customers</a>
                     </div>
                 </div>
             </div>
@@ -77,7 +86,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Total Clients </h5>
                         <h2 class="card-text">{{total_clients}}</h2>
-                        <a href="#" class="btn btn-warning">View Clients</a>
+                        <a href="{%url 'admin_stores_view' %}" class="btn btn-warning">View Clients</a>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-{% extends "../admin_dashboard.html" %} 
+{% extends "../dashboard.html" %} 
 
 {%block dashboard_content%}  
     <h1>Category</h1>  
@@ -21,7 +21,7 @@
             <td>{{category.title}}</td>
            
             <td><a href="{% url 'edit_category' category.id %}"> <i class="fa fa-edit"></i></a> |
-              <a href="{% url 'delete_category' category.id %}"><i class="fa fa-trash-o"></i></a></td>
+              <a href="{% url 'delete_category' category.id %}"><i class="fa fa-times"></i></a></td>
             <tr>
           {% endfor %}
           </tbody>

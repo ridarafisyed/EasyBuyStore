@@ -34,7 +34,7 @@
 <script src="{% static '/js/dashboard.js'%}"></script>
 
 <div class="row">
-  <div class="col-2 mt-5 mx-5">
+  <div class="col-3 mt-5 ">
     <aside >
         <div>
           {% if user.user_type == 0 %}
@@ -57,7 +57,10 @@
               <a class="nav-link" href="{%url 'order:admin_transaction_history'%}"><i class="material-icons">compare_arrows</i> Transactions</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{%url 'categories'%}"><i class="fa fa-sort-alpha-asc"></i> Categories</a>
+              <a class="nav-link" href="{%url 'order:admin_total_transaction_history'%}"><i class="material-icons">compare_arrows</i> Transactions History</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{%url 'admin_categories_views'%}"><i class="fa fa-sort-alpha-asc"></i> Categories</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{%url 'admin_stores_view'%}"><i class="fa fa-archive"></i> Stores</a>

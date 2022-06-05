@@ -1,0 +1,82 @@
+{% extends "../../base.html" %} 
+{% load static %}
+
+
+{% block title %}Checkout | {% endblock %}
+
+{% include "../components/header.html"%}
+
+
+{%block content%} 
+ 
+<div class="container">
+    <div class="row">        
+        <div class="col-8">
+            <div class="container">
+                <div class ="card p-3 mx-auto d-block"  style="width: 30rem;">
+                    <h3 class="card-title text-center text-uppercase">Payment Method</h3>
+                    <p class="text-center">Confirm Payment Method</p>
+                    <div class="card-body">
+                        <form  action="{% url "order:payment_method"%}" method="post">
+                            <div class="row">
+                                <div class="col">
+                                     {{form.as_p}}
+                                </div>
+                            </div>
+                       
+                            {% csrf_token %}
+                        <button
+                            type="submit"
+                            class="btn btn-success text-uppercase mx-auto d-block"
+                            style="background: #8e060f; border: #8e060f; margin:1rem"
+                            >Save & Continue </button
+                        >
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+         
+        <div class="col-4">
+            
+            
+                <div class="card-body">
+                    {% if address %}
+                        <h5 class="card-title">{{address.full_name}}</h5>
+                        {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
+                        <p class="card-text">
+                            <p>{{address.address_line}}</p>
+                            <p>{{address.address_line2}}</p>
+                            <p>{{address.phone}}</p>
+                        </p>
+                        <a href="{% url 'order:payment'%}" class="card-link">Continue with this address</a>
+                    {% else%} 
+                        <h5 class="card-title">No address found</h5>
+                        <p class="card-text">
+                            please add your address
+                        </p>
+                    {% endif%}
+                </div>
+            </div>
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    {% if order%}
+                        <h5 class="card-title">Order Summary</h5>
+                        <p class="card-text">
+                            <p>{{order.total_paid}}</p>
+        
+                        </p>
+                        
+                    {% else%} 
+                        <h5 class="card-title">No Order found</h5>
+                        <p class="card-text">
+                            please add your order
+                        </p>
+                    {% endif%}
+                </div>
+            </div>
+        </div>
+    </div>    
+
+</div>
+{%endblock%}

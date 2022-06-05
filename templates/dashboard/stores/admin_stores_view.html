@@ -25,7 +25,7 @@
             <td>{{store.created_at}}</td>
            
             <td><a href="{% url 'admin_edit_store' store.id %}"> <i class="fa fa-edit"></i></a> |
-              <a href="{% url 'admin_delete_store' store.id %}"><i class="fa fa-trash-o"></i></a></td>
+              <a href="{% url 'admin_delete_store' store.id %}"><i class="fa fa-times"></i></a></td>
             <tr>
           {% endfor %}
           </tbody>

@@ -50,6 +50,12 @@ class ProductForm(forms.ModelForm):
     price = forms.DecimalField(max_digits=6, min_value=0,
         widget=forms.NumberInput( attrs={'step': 0.01, 'class': 'form-control' })
     )
+    year = forms.IntegerField(
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control' 
+            }
+        ))
     quantity = forms.IntegerField(min_value=0,
         widget=forms.NumberInput(
             attrs={
@@ -60,7 +66,7 @@ class ProductForm(forms.ModelForm):
         
     class Meta:
         model = Product
-        fields = ("name", "title", 'description', "discount", "disc_value", "category", "price", "quantity","image")
+        fields = ("name", "title", 'description', "discount", "disc_value", "category", "price", 'year',"quantity","image")
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
             'image': forms.FileInput(attrs={'class': 'form-control'})

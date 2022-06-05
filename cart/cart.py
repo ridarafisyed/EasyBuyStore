@@ -58,6 +58,7 @@ class Cart(object):
         if product_id in self.cart:
             del self.cart[product_id]
             self.save()
+    
 
     def get_total_price(self):
        total = sum(Decimal(item['price']).quantize(Decimal('.01')) *  Decimal(item['quantity']).quantize(Decimal('.01')) for item in self.cart.values())

@@ -1,0 +1,44 @@
+{% extends "../dashboard.html" %} 
+{% load static %}
+
+
+{% block title %} Upgrade Account | {% endblock %}
+
+{%block dashboard_content%}
+<div class="container">
+    <div class="row"> 
+        
+            <div class="container">
+                 {% if user.user_type == 0%}
+                    <p>Your Account is already upgraded</p>                   
+                {% endif%}
+                <div class ="card p-3 mx-auto d-block"  style="width: 25rem; border-radius:10px">
+                    <h1 class="card-title text-center text-uppercase" style="color:#8e060f"><i class="far fa-arrow-alt-circle-up"></i></h1>
+                    <div class="card-body text-center">
+                        <h4 style="color:#444"> Upgrade Account</h4>
+                        <h1 style="color:#8e060f">Rs. 599<span style="font-size:0.95rem; color:#888">.99<span></h1>
+                            <ul class="list-group list-group-flush"  style="color:#333">
+                                <li class="list-group-item">Create Your Store</li>
+                                <li class="list-group-item">Manage Unlimited Products</li>
+                                <li class="list-group-item">manage unlimited Orders</li>
+                                <li class="list-group-item">Create your own Categories</li>
+                                <li class="list-group-item">Just 15.05% charges on each Transaction</li>
+                            </ul>
+
+                            <br/>
+                            {% if user.user_type == 0%}
+                                 <button disabled href="{% url 'billing_address'%}" class="btn btn-success">Upgrade Now</button>
+                            {% else %}
+                                <a  href="{% url 'billing_address'%}" class="btn btn-success">Upgrade Now</a>
+                            {% endif%}
+
+                                
+                    </div>
+                </div>
+     
+        </div>
+</div>
+
+
+
+{%endblock%}

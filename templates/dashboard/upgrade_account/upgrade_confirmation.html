@@ -1,0 +1,21 @@
+{% extends "../dashboard.html" %} 
+{%load humanize%}
+
+{% block title %} Upgrade Account | {% endblock %}
+{%block dashboard_content%} 
+<div class="container">
+    
+    <div class="row">
+        
+        <div class="col-8">
+            <div class="container">
+                <p> Thank you for choosing Us!</p>
+                <p>your account has been successfull upgrade </p>
+                <p> {{transaction.transaction_id}}</p>
+                <p> </p>
+            </div>
+
+            </div>
+        </div>
+
+{% endblock%}

@@ -84,7 +84,7 @@ class Product(models.Model):
 
 
     class Meta:
-        ordering = ['-added_at']
+        ordering = ['added_at']
     
     def __str__(self):
         return self.title
@@ -128,17 +128,6 @@ class Product(models.Model):
         
         super(Product, self).save(*args, **kwargs)
 
-class Images(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
-
-    title = models.CharField(max_length=255, blank=True)
-    image = models.ImageField(upload_to='images/', null=True, blank=True, verbose_name="")
-
-    def __str__(self) -> str:
-        return self.title 
-
-
-
 
 class Comments(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")
@@ -147,14 +136,10 @@ class Comments(models.Model):
     comment = models.CharField(max_length=255, blank=True)
     rate = models.PositiveIntegerField(default=1)
 
-    
-    
-
     def __str__(self) -> str:
         return self.user + '' + self.product
         
 
-# class SaveItem(models.Model):
-#     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-#     session_id = models.CharField(max_length=100)
-#     item = models.ForeignKey(Product, on_delete=models.CASCADE)
+# class WishList(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)

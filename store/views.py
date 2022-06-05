@@ -9,6 +9,7 @@ from account.models import Store
 from account.forms import StoreForm, StoreAdminForm
 from .forms import CommentsForm, ProductForm, CategoryForm, SearchForm
 from cart.forms import CartAddItemForm
+from django.db.models import Q 
 from django.contrib.auth import get_user_model
 import uuid
 
@@ -20,11 +21,8 @@ User = get_user_model()
 # this is the main page view when you enter the store 
 def store_view(request):
     deals = Product.objects.filter(discount= True)
-    categories = Category.objects.all()
-    brand = Brand.objects.all()
     products = Product.objects.all()
-
-    context= {'deals':deals, 'categories': categories, 'products': products, 'brand': brand}
+    context= {'deals':deals, 'products': products, }
     return render(request,'index.html', context)
 
 # products detail views 
@@ -53,7 +51,6 @@ def products_category_view(request, pk):
     category = Category.objects.get(pk=pk)
     products = Product.objects.filter(category = category)
     brand = Brand.objects.all()
-   
 
     context= {'deals':deals,  'products': products, 'category': category,'categories': categories, 'brand': brand}
     return render(request, "store/products/products_category.html", context )
@@ -73,13 +70,11 @@ def add_review(request, pk):
 def search(request):
     categories = Category.objects.all()
     if request.method == 'POST':
-        form = SearchForm(request.POST)
-        if form.is_valid():
-            query = form.cleaned_data['query']
-            products = Product.objects.filter(title__icontains = query)
-            categories = Category.objects.all()
-            context = {'products': products, "query": query, 'categories':categories}
-            return render(request, "store/products/search_products.html", context )
+        searched = request.POST['searched']
+        products = Product.objects.filter(Q(title__contains = searched)| Q(description__contains= searched))
+        categories = Category.objects.all()
+        context = {'products': products, "query": searched, 'categories':categories}
+        return render(request, "store/products/search_products.html", context )
     
     context = { 'categories':categories}
     return render(request, "store/products/search_products.html", context )
@@ -96,11 +91,11 @@ def admin_products_view(request):
     total = products.count()
 
     context = {'products': products, 'total': total}
-    return render(request, 'dashboard/products/products.html', context)
+    return render(request, 'dashboard/products/admin/admin_products.html', context)
 
 # edit any product detail 
 @user_passes_test(lambda u: u.is_superuser)
-def admin_product_edit_view(request,slug):
+def admin_product_edit_view(request, slug):
     product = Product.objects.get(slug=slug)
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
@@ -247,7 +242,103 @@ def admin_user_delete_view(request, pk):
 def admin_categories_view(request):
     categories =  Category.objects.all()
     total = categories.count()
-    return render(request, 'dashboard/categories/admin_categories.html', {'categories': categories, 'total': total})
+    return render(request, 'dashboard/categories/admin/admin_categories.html', {'categories': categories, 'total': total})
+
+
+# add product to their store 
+@login_required
+def product_add_view(request):
+    msg = None
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.vendor = request.user 
+            instance.slug= slugify(instance.title)
+            instance.save()
+            messages.info(request , "Product save successfully")
+            return redirect('products')
+    else:
+        form = ProductForm()
+
+    return render(request, "dashboard/products/admin/add_product.html", {'form': form})
+
+# user can edit their own products 
+@login_required
+def product_edit_view(request, pk):
+    vendor = request.user
+    product = vendor.products.get(pk=pk)
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        
+        if form.is_valid():
+            form.save()
+
+            return redirect('products')
+    else:
+        form = ProductForm(instance=product)
+    
+    return render(request, 'dashboard/products/admin/edit_product.html', {'form': form, 'product': product})
+
+# user can delete their own products 
+@login_required
+def product_delete_view(request, pk):
+    msg = None
+    vendor = request.user
+    product = vendor.products.get(pk=pk)
+    if product is not None:
+       product.delete()
+       messages.info(request , "successfully deteled!")
+    else: messages.error(request , "No record found")
+
+    return render(request, 'dashboard/products/admin/delete_product.html')
+
+
+@login_required
+def vendor_categories_view(request):
+    categories = Category.objects.all()
+    return render(request, 'dashboard/categories/admin/categories.html', {'categories': categories})
+
+@login_required
+def admin_category_edit_view(request, pk):
+    category = Category.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        
+        if form.is_valid():
+            form.save()
+            return redirect('categories')
+    else:
+        form = CategoryForm(instance=category)
+    
+    return render(request, 'dashboard/categories/admin/edit_category.html', {'form': form, 'category': category})
+    
+@login_required
+def admin_category_delete_view(request, pk):
+    msg = None
+    category = Category.objects.get(pk=pk)
+    if category is not None:
+       category.delete()
+       messages.info(request , "successfully deteled!")
+    else:  messages.error(request ,  "No record found")
+    return render(request, 'dashboard/categories/admin/delete_category.html',{'msg': msg})
+
+@login_required
+def admin_category_add_view(request):
+    msg = None
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category = form.save()
+            messages.info(request , "Category save successfully")
+            return redirect('categories')
+        else:
+            messages.error(request , "the form is not valid please try again...")
+    else:
+        form = CategoryForm()
+    return render(request, "dashboard/categories/admin/add_category.html", {'form': form, "msg": msg})
 
 
 
@@ -283,7 +374,6 @@ def product_add_view(request):
             instance.save()
             messages.info(request , "Product save successfully")
             return redirect('products')
-            
     else:
         form = ProductForm()
 

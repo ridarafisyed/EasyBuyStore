@@ -2,23 +2,64 @@
 {% extends "base.html" %} {% block content %}
 <style></style>
 <div class="container">
-  <div style="margin: 3rem">
-    <h1>Sign Up</h1>
-    <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %} {{form.as_p}}
-      <button
-        type="submit"
-        class="btn btn-success"
-        style="background: #8e060f; border: #8e060f"
-        >Submit</button
-      >
-    </form>
-    <hr />
-    <span>
-      Already have an account ?
-      <a href="{% url 'login_view'%}">Click Here!</a>
-    </span>
-  </div>
+  <div class ="card p-3 mx-auto d-block"  style="width: 30rem;">
+    <h3 class="card-title text-center text-uppercase">Sign Up</h3>
+    <div class="card-body">
+      <form action="{% url "register" %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %} 
+          <div class="row">
+            <div class="col">
+                
+              <label for="first_name" class="form-label">First Name</label>
+              {{form.first_name}}        
+              
+            </div>
+            <div class="col">
+              <label for="last_name" class="form-label">Last Name</label>
+              {{form.last_name}}
+            </div>
+          </div>
+          <div class="row ">
+            <div class="col">
+              <label for="username" class="form-label">Username</label>
+                {{form.username}}
+            </div>
+          </div>
+          <div class="row ">  
+            <div class="col">
+              <label for="email" class="form-label">Email</label>
+                {{form.email}}
+            </div>
+          </div>
+          <div class="row ">
+            <div class="col">
+              <label for="password1" class="form-label">Password</label>
+                {{form.password1}}
+            </div>
+          </div>
+          <div class="row ">
+            <div class="col">
+              <label for="password2" class="form-label">Confirm Password</label>
+                {{form.password2}}
+            </div>
+          </div>
+          
+              
+          </div>
+          <button
+                type="submit"
+                class="btn btn-success text-uppercase mx-auto d-block"
+                style="background: #8e060f; border: #8e060f; margin:1rem"
+                >Submit</button
+              >
+        </form>
+        <hr />
+        <span>
+          Already have an account ?
+          <a href="{% url 'login_view'%}">Click Here!</a>
+        </span>
+      </div>
+    </div>
 </div>
 
 {%endblock%}

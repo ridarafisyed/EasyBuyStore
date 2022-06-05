@@ -10,16 +10,66 @@
 {%block content%} 
  
 <div class="container">
-    <h4>Confirm Your Mailling address</h4>
+    
     <div class="row">
         
         <div class="col-8">
-            <h1> Address</h1>
-            <form  action="{% url "order:checkout"%}" method="post">
-            {{addressForm.as_p}}
-                {% csrf_token %}
-            <button class="btn btn-primary ">Add </button>
-            </form>
+            <div class="container">
+                <div class ="card p-3 mx-auto d-block"  style="width: 30rem;">
+                    <h3 class="card-title text-center text-uppercase">Shipping Address</h3>
+                    <p class="text-center">Confirm Your Shipping Address</p>
+                    <div class="card-body">
+                        <form  action="{% url "order:checkout"%}" method="post">
+                        {% comment %} {{addressForm.as_p}} {% endcomment %}
+                            {% csrf_token %}
+                           <div class="row ">  
+                                <div class="col">
+                                <label for="full_name" class="form-label">Full Name</label>
+                                    {{addressForm.full_name}}
+                                </div>
+                            </div>
+                             <div class="row ">  
+                                <div class="col">
+                                <label for="phone" class="form-label">Phone </label>
+                                    {{addressForm.phone}}
+                                </div>
+                            </div>
+                             <div class="row ">  
+                                <div class="col">
+                                <label for="full_name" class="form-label">Address line 1 </label>
+                                    {{addressForm.street_address}}
+                                </div>
+                            </div>
+                           <div class="row ">
+                                <div class="col">
+                                <label for="city" class="form-label">City</label>
+                                    {{addressForm.city}}
+                                </div>
+                                <div class="col">
+                                <label for="postcode" class="form-label">Postcode</label>
+                                    {{addressForm.postcode}}
+                                </div>
+                            </div>
+                                <div class="row ">
+                                <div class="col">
+                                <label for="state" class="form-label">State / Province</label>
+                                    {{addressForm.state}}
+                                </div>
+                                <div class="col">
+                                <label for="country" class="form-label">Country</label>
+                                    {{addressForm.country}}
+                                </div>
+                            </div>
+                         <button
+                            type="submit"
+                            class="btn btn-success text-uppercase mx-auto d-block"
+                            style="background: #8e060f; border: #8e060f; margin:1rem"
+                            >Add & Continue </button
+                        >
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
          
         <div class="col-4">
@@ -34,7 +84,7 @@
                             <p>{{address.address_line2}}</p>
                             <p>{{address.phone}}</p>
                         </p>
-                        <a href="{% url 'order:payment'%}" class="card-link">Continue with this address</a>
+                        <a href="{% url 'order:payment_method'%}" class="card-link">Continue with this address</a>
                     {% else%} 
                         <h5 class="card-title">No address found</h5>
                         <p class="card-text">
@@ -47,7 +97,6 @@
                 <div class="card-body">
                     {% if order%}
                         <h5 class="card-title">Order Summary</h5>
-                        {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
                         <p class="card-text">
                             <p>{{order.total_paid}}</p>
         

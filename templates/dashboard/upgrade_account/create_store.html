@@ -1,0 +1,37 @@
+
+
+{% extends "../dashboard.html" %} 
+{%load humanize%}
+
+{% block title %} Upgrade Account | {% endblock %}
+{%block dashboard_content%} 
+
+<div class="container">
+    
+    <div class="row">
+        
+        <div class="col-8">
+            <div class="container">
+                <div class ="card p-3 mx-auto d-block"  style="width: 30rem;">
+                    <h3 class="card-title text-center text-uppercase">Create Your Store</h3>
+                    <p class="text-center">Enter Your Store Name</p>
+                    <div class="card-body">
+                         <form  action="{% url "create_store"%}" method="post">
+                            {% csrf_token %}
+                            {{ form.as_p}}
+                                
+                            <button
+                            type="submit"
+                            class="btn btn-success text-uppercase mx-auto d-block"
+                            style="background: #8e060f; border: #8e060f; margin:1rem"
+                            > Create Store </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock%}
+
+
+

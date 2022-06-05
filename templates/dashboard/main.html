@@ -1,10 +1,10 @@
 {% extends "./dashboard.html" %} 
-
+{%load humanize%}
 {%block dashboard_content%} 
     <h2>Dashboard</h2>
     <h4>Hi, {{ user.first_name }} {{user.last_name}}</h4>
-    {%if store == None %}
-        <p> there is no store related to this account if you want to create store please <a href="{% url 'products'%}">click here</a></p>
+    {%if user.type == 0 %}
+        <p> there is no store related to this account if you want to create store please <a href="{% url 'billing_address'%}">click here</a></p>
     {% else %}
     
       {% if products %}
@@ -22,7 +22,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Total Orders</h5>
-                        <h2 class="card-text">10</h2>
+                        <h2 class="card-text">{{orders}}</h2>
                         <a href="#" class="btn btn-primary">View Orders</a>
                     </div>
                 </div>
@@ -31,29 +31,19 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Total Revenue </h5>
-                        <h2 class="card-text">$ 1500</h2>
+                        <h2 class="card-text">{{user.balance|intcomma}}</h2>
                         <a href="#" class="btn btn-primary">View Banlance </a>
                     </div>
                 </div>
             </div>
         </div>
-        <h4>Products</h4>   
-        <div class="row">      
-            {% for product in products %}
-                <div class="col-sm-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{product.title}}</h5>
-                            <p class="card-text">{{product.description}}</p>
-                            <a href="{% url 'edit_product' product.id %}">Edit</a>
-                        </div>
-                    </div> 
-                </div>
-            
-            {%endfor%}
-        </div>
+       
         {% else %}
+        {% if store%}
              <p> you dont have any product added <a href="{% url 'add_product'%}">click here</a></p>
+             {% else %}
+                 <p> You don't have any store created yet. Please  <a href="{% url 'create_store'%}">Create Store</a></p>
+             {%endif %}
         {%endif%} 
     
     {%endif%}

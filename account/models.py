@@ -1,6 +1,14 @@
+from decimal import Decimal
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import uuid
+from django.conf import settings
+
+from creditcards.models import CardNumberField, CardExpiryField, SecurityCodeField
+from django.forms import DateField
+
+
 
 CHOICES=[(0,'Client'),
          (1,'Customer')]
@@ -51,8 +59,10 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_customer = models.BooleanField(default=True)
     is_client = models.BooleanField(default = False)
+    balance = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     user_type = models.PositiveIntegerField(choices=CHOICES, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
+    update_at= models.DateTimeField(auto_now=True)
 
     objects = UserAccountManager()
 
@@ -62,11 +72,17 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     def __str__(self) -> str:
         return self.first_name + " " + self.last_name
 
+    @property
+    def get_balance(self):
+        return self.balance
+
    
 class Store(models.Model):
     name = models.CharField(max_length=255)
     owner = models.OneToOneField(UserAccount, related_name="store",  on_delete=models.CASCADE)
+    is_store_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
     class Meta:
         ordering = ['name']
@@ -74,14 +90,28 @@ class Store(models.Model):
     def __str__(self):
         return self.name
 
+class UpgradeTransaction(models.Model):
+    transaction_id = models.UUIDField(default = uuid.uuid4, editable = False)
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="upgrade_transaction",  null=True, blank=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at= models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.customer__username
+    
+
+
+
 class Address(models.Model):
     user = models.OneToOneField(UserAccount, related_name="shippment", on_delete=models.CASCADE)
     full_name = models.CharField(max_length=150)
     phone = models.CharField( max_length=50)
-    postcode = models.CharField( max_length=50)
-    address_line = models.CharField( max_length=255)
-    address_line2 = models.CharField( max_length=255, null=True, blank=True)
-    town_city = models.CharField( max_length=150)
+    street_address = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    postcode = models.CharField(max_length=255, null=True, blank=True)
+    state= models.CharField(max_length=255, null=True, blank=True)
+    country = models.CharField(max_length=255, null=True, blank=True)
     delivery_instructions = models.CharField( max_length=255, null=True, blank=True)
     created_at = models.DateTimeField( auto_now_add=True)
     updated_at = models.DateTimeField( auto_now=True)
@@ -90,3 +120,9 @@ class Address(models.Model):
     def __str__(self):
         return self.full_name
 
+class PaymentDetail(models.Model):
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name="payment_detail", null=True, blank=True)
+    cc_fullname = models.CharField( max_length=255)
+    cc_number = models.PositiveIntegerField()
+    cc_expiry =  models.CharField( max_length=255)
+    cc_code = models.PositiveIntegerField()

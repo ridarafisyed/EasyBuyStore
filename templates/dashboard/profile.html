@@ -1,0 +1,46 @@
+{% extends "./dashboard.html" %} 
+{%load humanize%}
+{%block dashboard_content%} 
+    <h2>Dashboard</h2>
+    <h4>Hi, {{ user.first_name }} {{user.last_name}}</h4>
+        <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    {% if billing_address %}
+                        <h5 class="card-title">{{billing_address.first_name}}</h5>
+                        {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
+                        <p class="card-text">
+                            <p>{{billing_address.street_address}}</p>
+                            <p>{{billing_address.city}}</p>
+                            <p>{{billing_address.country}}</p>
+                        </p>
+                        <a href="{% url 'order:payment_detail'%}" class="card-link">Continue with this address</a>
+                    {% else%} 
+                        <h5 class="card-title">No address found</h5>
+                        <p class="card-text">
+                            please add your address
+                        </p>
+                    {% endif%}
+                </div>
+            </div>
+    
+             <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    {% if cc_detail %}
+                        <h5 class="card-title">{{cc_detail.fullname}}</h5>
+                        {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
+                        <p class="card-text">
+                            <p>{{cc_detail.cc_number}}</p>
+                            <p>{{cc_detail.expiry}}</p>
+                         
+                        </p>
+                        <a href="{% url 'order:payment_detail'%}" class="card-link">Continue card</a>
+                    {% else%} 
+                        <h5 class="card-title">No address found</h5>
+                        <p class="card-text">
+                            please add your address
+                        </p>
+                    {% endif%}
+                </div>
+            </div>
+        
+{%endblock%}

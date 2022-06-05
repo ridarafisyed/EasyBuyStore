@@ -1,5 +1,4 @@
-{% extends "../admin_dashboard.html" %} 
-{% load humanize %}
+{% extends "../dashboard.html" %} 
 
 {%block dashboard_content%} 
 
@@ -22,10 +21,10 @@
           <tr>
             <td> {{product.id}}</td>
             <td>{{product.title}}</td>
-            <td>{{product.quantity|intcomma}}</td>
-            <td>Rs. {{product.price|intcomma}}</td>
-            <td><a href="{% url 'edit_product' product.id %}"> <i class="fa fa-edit"></i></a> |
-              <a href="{% url 'delete_product' product.id %}"><i class="fa fa-trash"></i></a></td>
+            <td>{{product.quantity}}</td>
+            <td>$ {{product.price}}</td>
+            <td><a href="{% url 'admin_product_edit_view' product.id %}"> <i class="fa fa-edit"></i></a> |
+              <a href="{% url 'admin_product_edit_view' product.id %}"><i class="fa fa-times"></i></a></td>
             <tr>
           {% endfor %}
           </tbody>

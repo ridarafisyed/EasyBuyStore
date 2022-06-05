@@ -1,0 +1,107 @@
+{% extends "../dashboard.html" %} 
+{% load static %}
+
+
+{% block title %} Billing Address | {% endblock %}
+
+{%block dashboard_content%}
+<div class="container">
+    
+    <div class="row">
+        
+        <div class="col-8">
+            <div class="container">
+                <div class ="card p-3 mx-auto d-block"  style="width: 30rem;">
+                    <h3 class="card-title text-center text-uppercase">Billing Address</h3>
+                    <div class="card-body">
+                        <form action="{% url "billing_address" %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %} 
+                            <div class="row">
+                                <div class="col">
+                                    
+                                <label for="first_name" class="form-label">First Name</label>
+                                {{billingAddressForm.first_name}}        
+                                
+                                </div>
+                                <div class="col">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                {{billingAddressForm.last_name}}
+                                </div>
+                            </div>
+                            <div class="row ">  
+                                <div class="col">
+                                <label for="email" class="form-label">Email</label>
+                                    {{billingAddressForm.email}}
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col">
+                                <label for="street_address" class="form-label">Street Address</label>
+                                    {{billingAddressForm.street_address}}
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col">
+                                <label for="city" class="form-label">City</label>
+                                    {{billingAddressForm.city}}
+                                </div>
+                                <div class="col">
+                                <label for="postcode" class="form-label">Postcode</label>
+                                    {{billingAddressForm.postcode}}
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col">
+                                <label for="state" class="form-label">State / Province</label>
+                                    {{billingAddressForm.state}}
+                                </div>
+                                <div class="col">
+                                <label for="country" class="form-label">Country</label>
+                                    {{billingAddressForm.country}}
+                                </div>
+                            </div>
+                            
+                                
+                           
+                            <button
+                                    type="submit"
+                                    class="btn btn-success text-uppercase mx-auto d-block"
+                                    style="background: #8e060f; border: #8e060f; margin:1rem"
+                                    >Continue </button
+                                >
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+         
+        <div class="col-4">
+            
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    {% if address %}
+                        <h5 class="card-title">{{address.full_name}}</h5>
+                        {% comment %} <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> {% endcomment %}
+                        <p class="card-text">
+                            <p>{{address.street_address}}</p>
+                            <p>{{address.city}}</p>
+                            <p>{{address.country}}</p>
+                        </p>
+                        <a href="{% url 'upgrade_account'%}" class="card-link">Continue with this address</a>
+                    {% else%} 
+                        <h5 class="card-title">No address found</h5>
+                        <p class="card-text">
+                            please add your address
+                        </p>
+                    {% endif%}
+                </div>
+            </div>
+            
+        </div>
+    </div>    
+
+</div>
+
+
+
+{%endblock%}
