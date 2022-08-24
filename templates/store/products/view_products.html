@@ -32,11 +32,31 @@
                   <h6 class="card-title">
                     <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
                   <h5 >Rs. {{product.price|intcomma}}</h5> 
-                  <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o	"></i></span></p>
+                  <span>{% for i in '01234'|make_list%}
+                        {% if i <  product.reviews.rate%}
+                        <i class="fa fa-star"></i> 
+                        {%else %}
+                          <i class="fa fa-star" style="color:#ddd"></i> 
+                        {% endif%}
+                    {% endfor %}  ({{ product.reviews.count}})
+                </span>
                   <div class="text-center"> 
                   
-                      <button href="#"  class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></button>
-                      <button href="{% url 'product_view' product.id%}" class="btn btn-light red"><i class="fa fa-heart"></i></button> </div>
+                       <form action="{% url "cart:cart_add" product.id %}" method="post" class="row g-3">
+                    {% csrf_token %}
+                    {{ single_form.non_field_errors }}
+
+                    {{ single_form.quantity.errors }}
+                    <label  for="{{ single_form.quantity.id_for_label }}" class="visually-hidden">Quantity</label>
+                    {{ single_form.quantity }}
+                    
+                    <div class="text-center"> 
+                        <button type="submit" class="btn btn-light addToCart"><i  class="fa fa-shopping-cart"></i></button>
+                            <a href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fas fa-binoculars"></i></a>
+                    </div>
+                </form> 
+                    
+                    </div>
                 </div>
               </div>
             </div>

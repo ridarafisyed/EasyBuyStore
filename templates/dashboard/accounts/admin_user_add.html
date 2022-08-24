@@ -1,16 +1,17 @@
-{% extends "../dashboard.html" %} 
-{% block dashboard_content %}
+{% extends "../admin_dashboard.html" %} 
+
+{%block dashboard_content%} 
 
 <div class="container">
   <div style="margin: 80px">
-    <h1>Add Store</h1>
+    <h1>Add User</h1>
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %} {{form.as_p}}
       <button
         type="submit"
         class="btn btn-success"
         style="background: #8e060f; border: #8e060f"
-        >Submit</button
+        >Add User</button
       >
     </form>
   </div>

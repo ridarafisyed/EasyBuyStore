@@ -47,7 +47,7 @@
               <h2> {{user.first_name}}  {{user.last_name}}</h2>
           {%endif%}
         </div>
-        {% if user.user_type == 0 %}
+        {% if user.user_type == 0 or store%}
           <ul class="nav flex-column" style="background:white">
             <li class="nav-item">
               <a class="nav-link active" href="{%url 'dashboard'%}"><i class="fa fa-home"></i>Home</a>

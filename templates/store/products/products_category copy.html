@@ -42,20 +42,8 @@
                   </span></p>
                   <div class="text-center"> 
                   
-                       <form action="{% url "cart:cart_add" product.id %}" method="post" class="row g-3">
-                    {% csrf_token %}
-                    {{ single_form.non_field_errors }}
-
-                    {{ single_form.quantity.errors }}
-                    <label  for="{{ single_form.quantity.id_for_label }}" class="visually-hidden">Quantity</label>
-                    {{ single_form.quantity }}
-                    
-                    <div class="text-center"> 
-                        <button type="submit" class="btn btn-light addToCart"><i  class="fa fa-shopping-cart"></i></button>
-                            <a href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fas fa-binoculars"></i></a>
-                    </div>
-                </form> 
-                    </div>
+                      <button href="#"  class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></button>
+                      <button href="{% url 'product_view' product.id%}" class="btn btn-light red"><i class="fa fa-heart"></i></button> </div>
                 </div>
               </div>
             </div>

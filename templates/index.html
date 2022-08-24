@@ -13,14 +13,12 @@
 
 
 <div class="container">
-  {% if deals %} 
+ {% if deals %} 
   <h3 class="text-center my-4 heading-title">Hot Deals</h3>
   <div class="row row-cols-1 row-cols-md-4 g-4">
       {% for product in deals %}
         <div class="col">
-          <div class="card">
-
-            
+          <div class="card">            
             <p style="margin-left: auto; margin-right: 0; padding-top:0.5rem; padding-right:0.5rem">
               <span class="badge rounded-pill bg-danger">Hot deal </span>
               {% now "Y" as current_year %}
@@ -32,16 +30,31 @@
             <div class="card-body">
              <h6 class="card-title">
                 <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
-              <h5 >Rs. {{product.disc_price|intcomma}} </h5> 
-              <p><span style = "text-decoration: line-through; color: gray">Rs. {{product.price|intcomma}} </span><span style = "color: gray"> {{product.disc_value}}% </span></p>
+              <h5 >Rs. {{product.get_total_price|floatformat:2|intcomma}} </h5> 
+              <p><span style = "text-decoration: line-through; color: gray">Rs. {{product.price|intcomma}} </span><span style = "color: blue"> {{product.disc_value}}% </span></p>
                 <p></p>
              
-              <div class="text-center"> <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></a> 
-                <a href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fas fa-binoculars"></i></a> </div>
+              <form action="{% url "cart:cart_add" product.id %}" method="post" class="row g-3">
+                  {% csrf_token %}
+                  {{ single_form.non_field_errors }}
+
+                  {{ single_form.quantity.errors }}
+                  <label  for="{{ single_form.quantity.id_for_label }}" class="visually-hidden">Quantity</label>
+                  {{ single_form.quantity }}
+                  
+                  <div class="text-center"> 
+                      <button type="submit" class="btn btn-light addToCart"><i  class="fa fa-shopping-cart"></i></button>
+                          <a href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fas fa-binoculars"></i></a>
+                  </div>
+              </form>
             </div>
           </div>
         </div>
         {% endfor %}
+        
+        </div>
+        <div class="float-end my-5">
+        <a href="{% url 'hotdeals_list_view' %}" class="btn btn-light red"> View more Deals <i class="fas fa-angle-double-right"></i></a>
         </div>
       {%else %}
       <div class="my-5">
@@ -89,17 +102,40 @@
               <h6 class="card-title">
                 <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
               <h5 >Rs. {{product.price|intcomma}}</h5> 
-              <p style="color:orange;"> <span> <i class="fa fa-star"></i> <i class="fa fa-star"></i><i class="fa fa-star"></i> <i class="fa fa-star-half-empty"></i><i class="fa fa-star-o	"></i></span></p>
+               <span>{% for i in '01234'|make_list%}
+                        {% if i <  product.reviews.rate%}
+                        <i class="fa fa-star"></i> 
+                        {%else %}
+                          <i class="fa fa-star" style="color:#ddd"></i> 
+                        {% endif%}
+                    {% endfor %}  ({{ product.reviews.count}})
+                </span>
               <div class="text-center"> 
               
-                  <button href="#"  class="btn btn-light addToCart"> <i  class="fa fa-shopping-cart"></i></button>
-                  <button href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fa fa-binoculars"></i></button> </div>
+                  <form action="{% url "cart:cart_add" product.id %}" method="post" class="row g-3">
+                    {% csrf_token %}
+                    {{ single_form.non_field_errors }}
+
+                    {{ single_form.quantity.errors }}
+                    <label  for="{{ single_form.quantity.id_for_label }}" class="visually-hidden">Quantity</label>
+                    {{ single_form.quantity }}
+                    
+                    <div class="text-center"> 
+                        <button type="submit" class="btn btn-light addToCart"><i  class="fa fa-shopping-cart"></i></button>
+                            <a href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fas fa-binoculars"></i></a>
+                    </div>
+                </form> 
+                </div>
             </div>
           </div>
         </div>
-      {% endfor %}
-      </div>
-    </div>
+      {% endfor %}</div>
+      <div class="float-end my-5">
+        <a href="{% url 'products_list_view' %}" class="btn btn-light red"> View more Deals <i class="fas fa-angle-double-right"></i></a>
+        </div>
+      
+      
+  
   {%endif%} 
 
    {% if brands%} 

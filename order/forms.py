@@ -1,7 +1,7 @@
 from django import forms
 
 from account.models import Address
-from order.models import BillingAddress, PaymentMethod
+from order.models import BillingAddress, PaymentMethod, Order
 
 
 
@@ -44,3 +44,15 @@ class BillingAddressForm(forms.ModelForm):
             "state": forms.TextInput(attrs={'class': 'form-control'}), 
             "country": forms.TextInput(attrs={'class': 'form-control'}),
          }
+
+class UpdateOrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ("status",)
+        widgets = {
+            'method' : forms.Select(attrs={'class': 'form-control'}),
+         }
+
+
+class TrackOrderForm(forms.Form):
+    search = forms.CharField(max_length=100)

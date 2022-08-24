@@ -113,10 +113,10 @@ class Product(models.Model):
             
             if self.disc_value > 0:
                 # if discount value is given it calcuate accordingly 
-                price =   self.disc_price = self.price - (self.disc_value/100 * self.price  )
+                price =   self.disc_price = (self.price - (self.disc_value/100 * self.price  ))
             else: 
                 # if the discount value no mentioned it but user want to give discount it will calculate with 25% 
-                price = self.disc_price = self.price - (25/100 * self.price)
+                price = self.disc_price = (self.price - (25/100 * self.price))
         else:
             
             price = self.price 
@@ -139,7 +139,6 @@ class Comments(models.Model):
     def __str__(self) -> str:
         return self.user + '' + self.product
         
-
 # class WishList(models.Model):
 #     user = models.ForeignKey(User, on_delete=models.CASCADE)
 #     product = models.ForeignKey(Product, on_delete=models.CASCADE)

@@ -1,0 +1,68 @@
+<!-- @format -->
+{% extends "../../base.html" %} 
+{% load humanize %}
+
+{% load static%}
+{% block head  %}
+  <link href="{% static '/css/product-cards.css' %}" rel="stylesheet"/>  
+ {% endblock %}
+{%block content%} 
+<div class="row">
+    <div class="col-2 px-5">
+        <h5>CATEGORIES<h5>
+        <div class="flex-column side-links">
+          {% if categories%} 
+            {% for category in categories %}
+              <a class="nav-link text-uppercase" href="{% url 'products_category_view' category.id%}">{{category.title}}</a></a>
+            {% endfor %}
+          {%endif%}  
+        </div>
+    </div>
+    <div class="col-8"> 
+{% if deals %} 
+  <h3 class="text-center my-4 heading-title">Hot Deals</h3>
+  <div class="row row-cols-1 row-cols-md-4 g-4">
+      {% for product in deals %}
+        <div class="col">
+          <div class="card">
+
+            
+            <p style="margin-left: auto; margin-right: 0; padding-top:0.5rem; padding-right:0.5rem">
+              <span class="badge rounded-pill bg-danger">Hot deal </span>
+              {% now "Y" as current_year %}
+              {%if product.year == current_year %}
+                <span class="badge rounded-pill bg-primary">Latest</span>
+              {% endif %}
+            </p>
+            <img src="{{product.image}}" class="card-img-top" alt="...">
+            <div class="card-body">
+             <h6 class="card-title">
+                <a href="{% url 'product_view' product.slug%}">{{product.title}}</a></h6>
+              <h5 >Rs. {{product.get_total_price|floatformat:2|intcomma}} </h5> 
+              <p><span style = "text-decoration: line-through; color: gray">Rs. {{product.price|intcomma}} </span><span style = "color: gray"> {{product.disc_value}}% </span></p>
+                <p></p>
+             
+              <form action="{% url "cart:cart_add" product.id %}" method="post" class="row g-3">
+                {% csrf_token %}
+                {{ single_form.non_field_errors }}
+
+                {{ single_form.quantity.errors }}
+                <label  for="{{ single_form.quantity.id_for_label }}" class="visually-hidden">Quantity</label>
+                {{ single_form.quantity }}
+                
+                <div class="text-center"> 
+                    <button type="submit" class="btn btn-light addToCart"><i  class="fa fa-shopping-cart"></i></button>
+                        <a href="{% url 'product_view' product.slug%}" class="btn btn-light red"><i class="fas fa-binoculars"></i></a>
+                </div>
+            </form> 
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+      {%else %}
+      <div class="my-5">
+        <h3 class="text-center my-4 heading-title">Hot Deals</h3>
+        <p class="text-center"> Sorry No deal for today..! Please come again. </p>
+      </div>
+  {%endif%} {% endblock%}

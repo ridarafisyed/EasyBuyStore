@@ -4,7 +4,7 @@ from account.models import PaymentDetail, Store
 from django.contrib.auth import get_user_model
 
 
-from creditcards.forms import CardNumberField, CardExpiryField, SecurityCodeField
+# from creditcards.forms import CardNumberField, CardExpiryField, SecurityCodeField
 
 
 User = get_user_model()
@@ -42,7 +42,14 @@ class SignUpForm(UserCreationForm):
         self.fields['password1'].widget.attrs['lable'] = 'Password'
         self.fields['password2'].widget.attrs['class'] = 'form-control form-control-sm'
         self.fields['password2'].widget.attrs['lable'] = 'Confirm Password '
-
+    def save(self, commit=True):
+         user = super(SignUpForm, self).save(commit=False)
+         user.email = self.cleaned_data['email']
+         user.set_password(self.cleaned_data["password1"])
+         if commit:
+             user.save()
+         return user
+         
 class StoreForm(forms.ModelForm):
     title =forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     class Meta:
@@ -53,7 +60,8 @@ class StoreAdminForm(forms.ModelForm):
     name =forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     class Meta:
         model = Store
-        fields = ("name", 'owner')
+        fields = ("name", 'owner',)
+
 class PaymentForm(forms.ModelForm):
 # forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}))
     cc_number = forms.IntegerField(max_value=9999999999999999, min_value=1000000000000000, 

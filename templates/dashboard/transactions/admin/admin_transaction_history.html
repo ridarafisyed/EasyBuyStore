@@ -11,7 +11,7 @@
           <th>Store</th>
           <th>Amount</th>
           <th>Transaction Date</th>
-          <th>Action</th>
+         
         </thead>
         <tbody>
      {% if transactions %}
@@ -24,9 +24,6 @@
             <td>{{transaction.store}}</td>
             <td>$ {{transaction.amount| intcomma}}</td>
             <td>{{transaction.created_at}}</td>
-             <td>
-              <a href="{% url 'order:transaction_update' transaction.id %}"> <i class="fa fa-edit"></i></a> |
-              <a href="{% url 'order:transaction_delete' transaction.id %}"><i class="fa fa-times"></i></a></td> 
             <tr>
           {% endfor %}
          

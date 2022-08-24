@@ -6,11 +6,11 @@ from django.contrib import messages
 from account.models import Address, PaymentDetail, UserAccount, Store
 from account.forms import PaymentForm
 from store.models import Product
-from order.models import BillingAddress, Order, OrderItem, OrderTransaction, PaymentMethod
+from order.models import BillingAddress, Order, OrderItem, OrderTransaction
 from cart.cart import Cart
-from .forms import AddressForm, PaymentMethodForm, BillingAddressForm
-
-from twilio.rest import Client
+from .forms import AddressForm, PaymentMethodForm, BillingAddressForm, UpdateOrderForm, TrackOrderForm
+import uuid
+# from twilio.rest import Client
 
 
 # ================================================  Checkout Process views =========================================== #
@@ -197,7 +197,18 @@ def admin_order_view(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_order_update(request, order_id):
-    return render(request, "dashboard/order/admin/admin_order_update.html")
+    order = Order.objects.get(pk= order_id)
+    if request.method == 'POST':
+        form = UpdateOrderForm(request.POST,  instance=order)
+        if form.is_valid():
+            form.save()
+
+            return redirect('order:admin_order_view')
+    else:
+        form = UpdateOrderForm(instance=order)
+
+    context =  {'form': form, 'order': order}
+    return render(request, "dashboard/order/admin/admin_order_update.html", context)
 
 @user_passes_test(lambda u: u.is_superuser)
 def admin_order_delete(request, order_id):
@@ -220,23 +231,6 @@ def admin_total_transaction_history(request):
     context = { 'transactions':transactions}
     return render(request, "dashboard/transactions/admin/admin_transaction_history.html", context )
 
-@user_passes_test(lambda u: u.is_superuser)
-def admin_transaction_update(request, transaction_id):
-    # transaction = Order.objects.get(pk=transaction_id)
-    # if transaction is not None:
-    #    transaction.delete()
-    #    messages.info(request,"successfully deteled!")
-    # else: messages.info(request, "No record found" )
-    return render(request, "dashboard/transactions/admin/admin_transaction_update.html")
-
-@user_passes_test(lambda u: u.is_superuser)
-def admin_transaction_delete(request, transaction_id):
-    transaction = Order.objects.get(pk=transaction_id)
-    if transaction is not None:
-       transaction.delete()
-       messages.info(request,"successfully deteled!")
-    else: messages.info(request, "No record found" )
-    return render(request, "dashboard/transactions/admin/admin_transaction_delete.html")
 
 
 # ===========================================  vender/store owner level views ====================================== #
@@ -248,11 +242,6 @@ def order_view(request):
 
 @login_required
 def order_update(request, order_id):
-    # transaction = Order.objects.get(pk=transaction_id)
-    # if transaction is not None:
-    #    transaction.delete()
-    #    messages.info(request,"successfully deteled!")
-    # else: messages.info(request, "No record found" )
     return render(request, "dashboard/order/order_update.html")
 
 @login_required
@@ -282,3 +271,29 @@ def transaction_delete(request, transaction_id):
        messages.info(request,"successfully deteled!")
     else: messages.info(request, "No record found" )
     return render(request, "dashboard/transactions/transaction_delete.html")
+
+def track_order_view(request):
+    msg = None
+    orders = Order.objects.all()
+    form = TrackOrderForm()
+    if request.method == 'POST':
+        searched = request.POST['searched']
+        
+        if is_valid_uuid(searched):
+            tracking_id = uuid.UUID(searched)
+            order = Order.objects.get(order_id = tracking_id)
+            print(order)
+            context = {'order': order, 'form':form}
+            return render(request, "dashboard/order/admin/admin_order_view.html", context )
+        else:
+            messages.warning(request , "Tracking Number is invalid!")
+    context = {'orders': orders, 'form':form}
+    return render(request, "dashboard/order/admin/admin_order_view.html", context )
+   
+def is_valid_uuid(value):
+    try:
+        uuid.UUID(str(value))
+
+        return True
+    except ValueError:
+        return False

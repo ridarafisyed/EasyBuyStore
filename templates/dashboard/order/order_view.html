@@ -6,6 +6,13 @@
 <div class="container">
   <div >
     <h1>Order History & Status </h1>
+    <div class="search">
+          <form action="{% url "order:track_order" %}"method="post">
+              {% csrf_token %}
+          <input id="searched" name="searched" type="text"  placeholder="Search" />
+          <button type="submit">Search Order</button>
+          </form>
+      </div>
      <table class="table table-striped table-hover">
         <thead>
           <th>Order #</th>
@@ -25,8 +32,8 @@
               <td>{{order.total_paid|intcomma}}</td>
               <td style="text-transform: uppercase">{{order.get_status_display}}</td>
               <td>
-                <a href="{% url 'order:order_update' order.order_id %}"> <i class="fa fa-edit"></i></a> |
-                <a href="{% url 'order:order_delete' order.order_id %}"><i class="fa fa-times"></i></a></td> 
+                <a href="{% url 'order:admin_order_update' order.order_id %}"> <i class="fa fa-edit"></i></a> |
+                <a href="{% url 'order:admin_order_delete' order.order_id %}"><i class="fa fa-times"></i></a></td> 
               <tr>
             {% endfor %}
           

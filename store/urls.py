@@ -8,13 +8,17 @@ urlpatterns = [
     path('', views.store_view, name="index" ), 
     path('product-view/<slug>/',views.product_detail_view,name='product_view'),  
     path('products-list-view/',views.products_list_view,name='products_list_view'),  
+    path('categories-list-view/',views.categories_list_view,name='categories_list_view'), 
+    path('hotdeals-list-view/',views.hotdeals_list_view,name='hotdeals_list_view'), 
+    path('brands-list-view/',views.brands_list_view,name='brands_list_view'),
     path('products-category-view/<int:pk>/',views.products_category_view,name='products_category_view'), 
+    path('products-brands-view/<int:pk>/',views.products_brands_view,name='products_brands_view'), 
     path("search/", views.search, name="search"),
 
     # admin level URLs
     # products CURD URLs
     path('admin-products-views', views.admin_products_view, name="admin_products_views"),
-    path('admin-product-add-view', views.admin_products_view, name="admin_product_add_view"),
+    path('admin-product-add-view', views.admin_product_add_view, name="admin_product_add_view"),
     path('admin-product-edit-view/<slug>/', views.admin_product_edit_view, name='admin_product_edit_view'),
     path('admin-product-delete-view/<slug>/', views.admin_product_delete_view, name='admin_product_delete_view'),
 
@@ -31,7 +35,6 @@ urlpatterns = [
     path('admin-users-delete/<int:pk>/', views.admin_user_delete_view, name="admin_users_delete"),
     
     # categories URLs
-
     path('admin-categories-views', views.admin_categories_view, name="admin_categories_views"),
     path('admin-add-category/', views.admin_category_add_view, name="admin_add_category"),
     path('admin-edit-category/<int:pk>/', views.admin_category_edit_view, name='admin_edit_category'),

@@ -1,0 +1,48 @@
+<!-- @format -->
+{% extends "../../base.html" %} 
+{% load humanize %}
+
+{% load static%}
+{% block head  %}
+  <link href="{% static '/css/product-cards.css' %}" rel="stylesheet"/>  
+ {% endblock %}
+
+{%block content%} 
+
+{% if categories%}
+<div class="row">
+    <div class="col-2 px-5">
+        <h5>CATEGORIES<h5>
+        <div class="flex-column side-links">
+          {% if categories%} 
+            {% for category in categories %}
+              <a class="nav-link text-uppercase" href="{% url 'products_category_view' category.id%}">{{category.title}}</a></a>
+            {% endfor %}
+          {%endif%}  
+        </div>
+    </div>
+    <div class="col-8">
+		<h3 class="text-center my-4 heading-title">Top Categories</h3>
+		<div class="row row-cols-1 row-cols-md-4 g-4">
+                  {% comment %} {% for brand in brands %}
+                    <img src="{{ brand.get_url}}"  alt="">
+                    {% endfor %} {% endcomment %}
+                    {% for brands in brands %}
+                        <div class="col-md-3 text-center">
+                          <div class="card" style="width: 18rem">
+                            <img src="{{ brands.get_url }}" class="card-img-top" alt="{{brands.title}}" />
+                            <div class="card-body">
+                              <h5 class="card-title text-uppercase"
+                                ><a href="{% url 'products_brands_view' brands.id %}"
+                                  >{{brands.title}}</a
+                                ></h5
+                              >
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+             </div>
+		{%endif%} 
+	</div>
+</div>
+		{% endblock%}

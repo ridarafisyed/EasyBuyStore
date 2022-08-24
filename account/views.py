@@ -6,14 +6,12 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from order.models import Order, OrderTransaction
-
-
 from .models import Store, PaymentDetail, Address, UpgradeTransaction
 from store.models import Product
 from .forms import LoginForm, PaymentForm, SignUpForm, StoreForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from order.models import BillingAddress
+from order.models import BillingAddress,OrderItem
 from order.forms import BillingAddressForm
 
 User = get_user_model()
@@ -61,6 +59,7 @@ def login_view(request):
 @login_required
 def dashboard_view(request):    
     user = request.user
+    
     if user.is_superuser:
         total_stores = Store.objects.all().count()
         total_customers = User.objects.filter(user_type = 1).count()
@@ -117,19 +116,36 @@ def dashboard_view(request):
         return render(request, 'dashboard/admin_main.html', context )
 
     else:             
-        if user.user_type == 0 :
-            store = Store.objects.filter(owner = user)
-           
-            if store is not None:
-                store = store
-                products =  Product.objects.filter(vendor=request.user)
-            else:
-                store = None
-                products = None
+        if Store.objects.filter(owner = user).exists():
+            store = Store.objects.get(owner = user)
+            store_id = store.id
+            products =  Product.objects.filter(vendor=request.user)
+            total_products = Product.objects.filter(vendor=request.user).count()
+            total_orders = OrderItem.objects.filter(store=store_id).count()
+            total = 0
+            transactions = OrderTransaction.objects.filter(customer = request.user)
+            for transaction in transactions:
+                total += transaction.amount
+
+            user.balance = total
+            
+            if total_products is None:
+                total_products = 0
+            
+            if total_orders is None:
+                total_orders = 0
+        
+            return render(request, 'dashboard/main.html', {'user' : user,
+            'store':store,
+                'total_products':total_products, 
+                'total_orders': total_orders,
+                'balance' : user.balance})
+            
         else: 
             store = None
             products = None
-        return render(request, 'dashboard/main.html', {'user':user, 'store':store, 'products':products})
+            context = {'user':user, 'store':store, 'products':products}
+        return render(request, 'dashboard/main.html', context)
 
 def profile_view(request):
     cc_detail = PaymentDetail.objects.filter(user = request.user)
@@ -243,21 +259,24 @@ def upgrade_confirmation(request):
 
 
 def create_store(request):
+    msg= None
     form = StoreForm()
     if request.method == 'POST':
         form  = StoreForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            store= Store.objects.create(  
+            store = Store.objects.create(  
                     owner = request.user,
                     name = cd['title']
                 )
+            
             store.is_store_active = True
+            request.user.user_type = 1
+            store.save()
             messages.success(request , "Store is created successfully")
             redirect('dashboard')
     else: 
         form = StoreForm()
-            
 
     context = {'form':form}
     return render(request, "dashboard/upgrade_account/create_store.html", context)

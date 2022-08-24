@@ -4,7 +4,15 @@
 <div class="container">
   <div style="margin: 80px">
     <p>Update Order</p>
-    {% comment %} <p>{{msg}}</p> {% endcomment %}
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %} {{form.as_p}}
+      <button
+        type="submit"
+        class="btn btn-success"
+        style="background: #8e060f; border: #8e060f"
+        >Submit</button
+      >
+    </form>
   </div>
 </div>
 {%endblock%}
