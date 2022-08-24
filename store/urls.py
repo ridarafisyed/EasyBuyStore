@@ -14,6 +14,7 @@ urlpatterns = [
     path('products-category-view/<int:pk>/',views.products_category_view,name='products_category_view'), 
     path('products-brands-view/<int:pk>/',views.products_brands_view,name='products_brands_view'), 
     path("search/", views.search, name="search"),
+    path("add-review/<int:pk>/", views.add_review, name="add_review"),
 
     # admin level URLs
     # products CURD URLs

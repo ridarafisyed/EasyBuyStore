@@ -71,7 +71,10 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     def get_balance(self):
         return self.balance
 
-   
+class ForgetPasswordToken(models.Model):
+    owner = models.OneToOneField(UserAccount, related_name="forget_password",  on_delete=models.CASCADE, null=True, blank=True)
+    token = models.CharField(max_length=255)
+
 class Store(models.Model):
     name = models.CharField(max_length=255)
     owner = models.OneToOneField(UserAccount, related_name="store",  on_delete=models.CASCADE)
@@ -94,8 +97,6 @@ class UpgradeTransaction(models.Model):
 
     def __str__(self):
         return self.customer__username
-    
-
 
 
 class Address(models.Model):

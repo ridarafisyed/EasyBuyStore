@@ -39,6 +39,7 @@ def product_detail_view(request, slug):
    commentform = CommentsForm()
    context= {'product':product, 'comments' : comments,'form':form, 'single_form': singleForm, 'commentform': commentform,'same_category': same_category_products, 'same_brand': same_brand_products}
    return render(request, "store/products/view_product.html", context )
+   
 
 def products_list_view(request):
     deals = Product.objects.filter(discount= True)
@@ -91,10 +92,10 @@ def add_review(request, pk):
     if request.method == 'POST':
         form = CommentsForm(request.POST)
         if form.is_valid:
-            cd = form.cleaned_data
             user = request.user
             product = Product.objects.get(pk = pk)
-            comment = Comments.objects.create(user=user, product= product,comment=cd['comment'], rate=cd['rate'])
+            comment = Comments.objects.create(user=user, product= product,comment=request.POST['comments'], rate=request.POST['rate'])
+            comment.save()
             messages.info(request, "Your review is submitted successfully!")
             return HttpResponseRedirect(request.path_info)
     return HttpResponseRedirect(request.path_info)
